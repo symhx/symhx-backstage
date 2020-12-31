@@ -6,7 +6,7 @@
             </div>
             <div class="header-nav">
                 <ul class="header-ul">
-                    <li data-menuanchor="page1"><a href="#page1">首页</a></li>
+                    <li data-menuanchor="page1" :class="{'active': isActive}"><a href="#page1">首页</a></li>
                     <li data-menuanchor="page2"><a href="#page2">简介</a></li>
                     <li data-menuanchor="page3"><a href="#page3">业务</a></li>
                     <li data-menuanchor="page5"><a href="#page5">产品</a></li>
@@ -39,6 +39,7 @@
                 ],
                 bannerIndex: 1,
                 initBannerIndex: 0,
+                isActive: true
             };
         },
         mounted() {
@@ -149,5 +150,13 @@
     .white .header-nav>ul>li.active>a {
         color: #FFFFFF;
         text-decoration: none;
+    }
+    .white .header-nav>ul>li>a {
+        color: #ffffff;
+        text-decoration: none;
+    }
+    .white .header-nav>ul>li:hover::before {
+        left: 0;
+        width: 100%;
     }
 </style>
