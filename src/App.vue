@@ -32,4 +32,12 @@ html,body {
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+a{
+  text-decoration: none;
+}
 </style>
