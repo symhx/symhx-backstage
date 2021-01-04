@@ -23,6 +23,16 @@ const router = new Router({
       path: "/contact",
       name: "contact",
       component: () => import("./views/contact/ContactUS")
+    },
+    {
+      path: "/footer",
+      name: "footer",
+      component: () => import("./views/footer/Footer")
+    },
+    {
+      path: "/preView",
+      name: "preView",
+      component: () => import("./views/PreView")
     }
   ]
 })

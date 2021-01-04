@@ -25,7 +25,7 @@
                 </ul>
             </div>
             <div class="content-right">
-                <form action="">
+                <form>
                     <ul>
                         <li>
                             <span>姓名：</span><input type="text" placeholder="您的称呼">
@@ -37,12 +37,18 @@
                             <span class="message">留言：</span><textarea type="text" style="resize: none" cols="10" rows="10" placeholder="您的创意"></textarea>
                         </li>
                         <li>
-                            <button>提交</button>
+                            <div @click="delivery">投递</div>
                         </li>
                     </ul>
                 </form>
             </div>
         </div>
+        <el-dialog
+                class="contact-tips"
+                width="70%"
+                :visible.sync="visible"
+                center>
+        </el-dialog>
     </div>
 </template>
 
@@ -51,16 +57,33 @@
         name: "ContactUS",
         data() {
             return {
+                // 文本属性
                 contactTitle: '联系我们',
                 contactDesc: '为您提供定制产品和品牌设计服务, 让您的创意成为可能',
+                // 数据对象
                 contentLeft: {
                     qq: '1766470919',
                     wx: 'Jun1766470919',
                     mail: '1766470919@qq.com',
                     phone: '184 8365 0305',
                     address: '成都市高新区天府软件园G1区1206'
-                }
+                },
+                // 状态属性
+                visible: false
             };
+        },
+        mounted() {
+
+        },
+        created() {
+
+        },
+        methods: {
+            delivery() {
+                this.visible = true;
+            }
+        },
+        destroyed() {
         }
     }
 </script>
@@ -120,7 +143,6 @@
     }
     .content-left>ul>li{
         line-height: 36px;
-        min-width: 299px;
     }
     .content-right>form{
         height: 100%;
@@ -160,7 +182,7 @@
         left: -2px;
         font-family: '微软雅黑', '宋体';
     }
-    .content-right>form>ul>li>button{
+    .content-right>form>ul>li>div{
         color: #fff;
         outline: 0;
         border: none;
@@ -199,8 +221,6 @@
     /*=================响应式代码=====================*/
     @media screen and (min-width: 1220px) {
         .contact-wrap {
-            background-color:red;
-
         }
     }
     @media screen and (min-width: 720px) and (max-width:1220px){
@@ -210,33 +230,64 @@
     }
     @media screen and (min-width: 375px) and (max-width:720px) {
         .contact-wrap {
-            background-color: #ffffff;
+            background-image: url("../../assets/mobile-bg-01.jpg");
+            background-size: 100% 100%;
             padding: 0 15px;
+        }
+        .contact-title{
+            color: #fff;
         }
         .contact-content{
             display: inline-block;
             margin-top: 0;
         }
+        .contact-desc{
+            color: #ff7600ba;
+        }
+        .content-left{
+            margin-bottom: 32px;
+        }
         .content-left>ul>li{
-            padding-left: 40px;
+            color: #fff;
         }
         .content-left>ul{
             left: unset;
             width: 100%;
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            font-size: 15px;
+            padding: 0 10px;
         }
         .content-right>form>ul>li{
             width: 100%;
+            position: relative;;
+            line-height: 0;
+        }
+        .content-right>form>ul>li:nth-child(4){
+            display: flex;
+            justify-content: flex-end;
+        }
+        .content-right>form>ul>li>span{
+            display: none;
         }
         .content-right>form>ul>li>input{
-            width: 80%;
-        }
-        .message{
-            float: left;
+            width: 100%;
+            margin-left: 0;
         }
         .content-right>form>ul>li>textarea{
-            width: 80%;
-            left: 10px;
+            width: 100%;
             float: unset;
+            left: 0;
+        }
+        .content-right>form>ul>li>div{
+            left: unset;
+        }
+        .contact-tips{
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
     }
 
