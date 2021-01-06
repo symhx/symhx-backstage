@@ -97,7 +97,7 @@
         text-align: center;
         font-size: 48px;
         position: relative;
-        color: #333;
+        color: #c7a480;
         line-height: 72px;
         font-weight: 500;
         padding: 25px 0;
@@ -128,18 +128,23 @@
     .content-left{
         position: relative;
         text-align: left;
-        width: 100%;
+        width: 50%;
         color: #666;
+        display: flex;
+        justify-content: flex-end;
+        padding-right: 50px;
     }
     .content-right{
         position: relative;
-        width: 100%;
+        width: 50%;
         color: #666;
+        display: flex;
+        justify-content: flex-start;
+        padding-left: 50px;
     }
     .content-left>ul{
         position: relative;
         display: inline-block;
-        left: 50%;
     }
     .content-left>ul>li{
         line-height: 36px;
@@ -164,7 +169,7 @@
         outline: 0;
         border: none;
         height: 45px;
-        width: 90%;
+        width: 55%;
         text-indent: 14px;
         font-weight: 500;
         margin-left: 10px;
@@ -173,14 +178,16 @@
         background: #f7f7f7;
         outline: 0;
         border: none;
-        width: 90%;
+        width: 55%;
         height: 157px;
         text-indent: 14px;
         padding-top: 15px;
-        float: right;
         position: relative;
-        left: -2px;
+        left: 10px;
         font-family: '微软雅黑', '宋体';
+    }
+    .message{
+        float: left;
     }
     .content-right>form>ul>li>div{
         color: #fff;
@@ -192,7 +199,8 @@
         height: 45px;
         text-align: center;
         line-height: 43px;
-        background: #3b97e6;
+        background: #c7a480;
+        border-radius: 8px;
         font-size: 16px;
         position: relative;
         left: 60px;
@@ -246,6 +254,7 @@
         }
         .content-left{
             margin-bottom: 32px;
+            width: 100%;
         }
         .content-left>ul>li{
             color: #fff;
@@ -260,6 +269,13 @@
             font-size: 15px;
             padding: 0 10px;
         }
+        .content-right{
+            padding-left: 0;
+            width: 100%;
+        }
+        .content-right>form{
+            width: 100%;
+        }
         .content-right>form>ul>li{
             width: 100%;
             position: relative;;
@@ -267,7 +283,8 @@
         }
         .content-right>form>ul>li:nth-child(4){
             display: flex;
-            justify-content: flex-end;
+            justify-content: center;
+            margin-top: 32px;
         }
         .content-right>form>ul>li>span{
             display: none;
@@ -283,6 +300,8 @@
         }
         .content-right>form>ul>li>div{
             left: unset;
+            border-radius: 0;
+            width: 44%;
         }
         .contact-tips{
             display: flex;

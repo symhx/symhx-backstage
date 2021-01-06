@@ -1,7 +1,7 @@
 <template>
     <div class="footer-wrap">
         <div class="footer-qr">
-            <div>
+            <div class="qr-img">
                 <img src="../../assets/qr-img.jpg" width="150" height="150" alt="">
             </div>
             <span>{{qrDesc}}</span>
@@ -43,13 +43,13 @@
 <style scoped>
     .footer-wrap {
         width: 100%;
-        background: #101010;;
+        background: #494b4c;;
         color: #999;
         font-family: '微软雅黑','宋体';
         padding: 80px 15px 30px;
     }
     .footer-qr{
-        margin-bottom: 12px;
+        margin-bottom: 20px;
     }
     .footer-content{
         font-size: 14px;
@@ -59,18 +59,25 @@
         font-size: 14px;
     }
     /*=================响应式代码=====================*/
-    @media screen and (min-width: 1220px) {
+    @media screen and (min-width: 720px) {
         .footer-wrap {
+        }
+        .qr-img{
+            margin-bottom: 20px;
         }
         .mobile-footer-content{
             display: none;
         }
     }
-    @media screen and (min-width: 0px) and (max-width:1220px) {
+    @media screen and (min-width: 0px) and (max-width:720px) {
         .footer-wrap {
+            background: #101010;;
         }
         .footer-content {
             display: none;
+        }
+        .qr-img{
+            margin-bottom: 10px;
         }
     }
 </style>
