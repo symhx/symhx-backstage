@@ -227,11 +227,11 @@
         font-family: '微软雅黑', '宋体';
     }
     /*=================响应式代码=====================*/
-    @media screen and (min-width: 1220px) {
+    @media screen and (min-width: 1221px) {
         .contact-wrap {
         }
     }
-    @media screen and (min-width: 720px) and (max-width:1220px){
+    @media screen and (min-width: 721px) and (max-width:1220px){
         .contact-content {
             display: flex;
         }

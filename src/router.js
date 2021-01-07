@@ -20,6 +20,11 @@ const router = new Router({
       component: () => import("./views/About.vue")
     },
     {
+      path: "/header",
+      name: "header",
+      component: () => import("./views/header/Header")
+    },
+    {
       path: "/contact",
       name: "contact",
       component: () => import("./views/contact/ContactUS")

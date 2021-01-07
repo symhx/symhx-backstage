@@ -59,7 +59,7 @@
         font-size: 14px;
     }
     /*=================响应式代码=====================*/
-    @media screen and (min-width: 720px) {
+    @media screen and (min-width: 721px) {
         .footer-wrap {
         }
         .qr-img{
