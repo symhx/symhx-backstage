@@ -25,6 +25,16 @@ const router = new Router({
       component: () => import("./views/header/Header")
     },
     {
+      path: "/banner",
+      name: "banner",
+      component: () => import("./views/banner/Banner")
+    },
+    {
+      path: "/server",
+      name: "server",
+      component: () => import("./views/server/Server")
+    },
+    {
       path: "/contact",
       name: "contact",
       component: () => import("./views/contact/ContactUS")

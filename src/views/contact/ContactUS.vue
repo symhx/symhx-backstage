@@ -4,6 +4,8 @@
             {{contactTitle}}
         </div>
         <p class="contact-desc">{{contactDesc}}</p>
+        <p class="contact-desc-one">{{contactOne}}</p>
+        <p class="contact-desc-two">{{contactTwo}}</p>
         <div class="contact-content">
             <div class="content-left">
                 <ul>
@@ -60,6 +62,8 @@
                 // 文本属性
                 contactTitle: '联系我们',
                 contactDesc: '为您提供定制产品和品牌设计服务, 让您的创意成为可能',
+                contactOne: '为您提供定制产品和品牌设计服务',
+                contactTwo: '让您的创意成为可能',
                 // 数据对象
                 contentLeft: {
                     qq: '1766470919',
@@ -118,6 +122,7 @@
         color: #999;
         font-size: 24px;
         font-weight: 500;
+        display: block;
     }
     .contact-content{
         display: flex;
@@ -226,17 +231,21 @@
         color: #757575;
         font-family: '微软雅黑', '宋体';
     }
+    .contact-desc-one,.contact-desc-two{
+        display: none;
+    }
     /*=================响应式代码=====================*/
     @media screen and (min-width: 1221px) {
         .contact-wrap {
         }
+
     }
     @media screen and (min-width: 721px) and (max-width:1220px){
         .contact-content {
             display: flex;
         }
     }
-    @media screen and (min-width: 375px) and (max-width:720px) {
+    @media screen and (min-width: 0px) and (max-width:720px) {
         .contact-wrap {
             background-image: url("../../assets/mobile-bg-01.jpg");
             background-size: 100% 100%;
@@ -250,11 +259,19 @@
             margin-top: 0;
         }
         .contact-desc{
+            display: none;
+        }
+        .contact-desc-one,.contact-desc-two{
+            display: block;
             color: #ff7600ba;
+            margin-top: 20px;
+            font-size: 20px;
+            font-weight: 500;
         }
         .content-left{
             margin-bottom: 32px;
             width: 100%;
+            padding-right: 0;
         }
         .content-left>ul>li{
             color: #fff;

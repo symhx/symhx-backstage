@@ -68,6 +68,7 @@
 
 <style scoped>
     .header-wrap {
+        background: #fff;
         width: 100%;
         display: flex;
         justify-content: center;
@@ -138,9 +139,14 @@
 
     /*=================响应式代码=====================*/
     @media screen and (min-width: 721px) {
+        .header-wrap {
+            box-shadow: 0 2px 1px 1px #b5b5b526;
+            border-bottom: 0;
+        }
         .desc-right>span{
             display: none;
         }
+
     }
     @media screen and (min-width: 0px) and (max-width:720px) {
         .header-wrap{

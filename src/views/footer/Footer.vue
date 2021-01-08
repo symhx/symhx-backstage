@@ -43,10 +43,10 @@
 <style scoped>
     .footer-wrap {
         width: 100%;
-        background: #494b4c;;
+        background: #494b4c;
         color: #999;
-        font-family: '微软雅黑','宋体';
-        padding: 80px 15px 30px;
+        font-family: "PingFang SC";
+        padding: 40px 15px 15px;
     }
     .footer-qr{
         margin-bottom: 20px;

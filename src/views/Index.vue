@@ -1,22 +1,5 @@
 <template>
     <div class="index_wrap">
-        <div class="header white">
-            <div>
-                <img src="../assets/logo.png" alt="苏屿网络科技">
-            </div>
-            <div class="header-nav">
-                <ul class="header-ul">
-                    <li data-menuanchor="page1" :class="{'active': isActive}"><a href="#page1">首页</a></li>
-                    <li data-menuanchor="page2"><a href="#page2">简介</a></li>
-                    <li data-menuanchor="page3"><a href="#page3">业务</a></li>
-                    <li data-menuanchor="page5"><a href="#page5">产品</a></li>
-                    <li data-menuanchor="page6"><a href="#page6">案例</a></li>
-                    <li data-menuanchor="page7"><a href="#page7">服务</a></li>
-                    <li data-menuanchor="page8"><a href="#page8">联系</a></li>
-                </ul>
-                <i class="base-icon menu-icon"></i>
-            </div>
-        </div>
         <el-carousel :initial-index="initBannerIndex" trigger="click" indicator-position="outside" class="sy-banner-head" @change="changeBanner">
             <el-carousel-item v-for="(item,index) in imageList" :key="item">
                 <img :src="item" :class="[bannerIndex===index?'selected_banner':'no_selected']" alt="">
