@@ -32,19 +32,19 @@
                 showEnable: false,
                 intro: [
                     {label: '首页'},
+                    // {label: '简介'},
                     {label: '业务'},
-                    {label: '简介'},
-                    {label: '产品'},
+                    // {label: '产品'},
                     {label: '服务'},
                     // '案例',
                     {label: '联系'}
                 ],
                 miniIntro: [
                     {label: '首页'},
+                    // {label: '关于我们'},
                     {label: '业务'},
-                    {label: '简介'},
                     {label: '服务与支持'},
-                    // '案例',
+                    // {label: '案例'},
                     {label: '联系我们'}
                 ]
             }

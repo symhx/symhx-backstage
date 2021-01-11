@@ -4,6 +4,7 @@ import router from "./router";
 import store from "./store";
 import http from './utils/HttpUtil';
 import 'nprogress/nprogress.css';
+import '../src/iconfont/iconfont.css'
 
 import '../theme/index.css';
 import ElementUI from 'element-ui';
