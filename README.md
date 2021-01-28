@@ -1,3 +1,8 @@
+# 网站主色
+```
+#333 #e4b685
+```
+
 # symhx-backstage
 
 ## Project setup

@@ -32,6 +32,7 @@
                 showEnable: false,
                 intro: [
                     {label: '首页'},
+                    {label: '产品'},
                     // {label: '简介'},
                     {label: '业务'},
                     // {label: '产品'},
