@@ -26,11 +26,18 @@
                     <ul>
                         <li class="ewm-ul-li" :key="item.title" v-for="item in ewmList">
                             <span>{{item.title}}</span>
-                            <img src="../../assets/qr-img.jpg" width="120" height="120" alt="二维码">
+                            <img :src="item.imgPath" width="120" height="120" alt="二维码">
                         </li>
                     </ul>
                 </div>
             </div>
+        </div>
+        <div class="mini-serve-desc">
+            <ul class="mini-serve-ul">
+                <li class="mini-serve-ul-li" :key="item" v-for="item in miniServeDescList">
+                    {{item}}
+                </li>
+            </ul>
         </div>
         <div class="record-information">
             <div class="pc-footer-content">
@@ -53,12 +60,15 @@
                 year: 0,
                 copyright: '',
                 descInfoList: [
-                    {title: '首页', itemList: ['产品', '服务', '流程', '关于']},
+                    {title: '首页', itemList: ['产品', '服务', '案例', '流程', '关于']},
                     {title: '产品中心', itemList: ['苏码', '苏表单', '苏网站']},
                     {title: '联系我们', itemList: [{icon: 'icondianhua', label: '18483650305'}, {icon: 'iconservice', label: '工作日 9:00-18:00'}, {icon: 'iconxinfengbeifen', label: 'symhx@foxmail.com'}, {icon: 'icondingwei', label: '成都市高新区天府软件园G1区12层'}]}
                 ],
+                miniServeDescList: [
+                    '服务', '案例', '流程', '关于', '联系'
+                ],
                 ewmList: [
-                    {title: '订阅号', imgPath: '../../assets/qr-img.jpg'}
+                    {title: '微信公众号', imgPath: require('../../assets/qr-img.jpg')}
                 ],
                 FollowUS: '关注我们'
             }
@@ -141,6 +151,9 @@
         margin-left: 4px;
         font-size: 14px;
     }
+    .mini-serve-desc{
+        display: none;
+    }
     .record-information{
         position: relative;
         margin-top: 20px;
@@ -174,7 +187,6 @@
         font-size: 14px;
         display: flex;
         flex-direction: column;
-        margin-right: 10px;
     }
     .ewm-item-wrap>ul>.ewm-ul-li>span{
         width: 120px;
@@ -218,6 +230,27 @@
     @media screen and (min-width: 0px) and (max-width:720px) {
         .footer-wrap {
         }
+
+        .promotional-information>.left-desc{
+            display: none;
+        }
+        .promotional-information>.right-ewm>p{
+            display: none;
+        }
+        .ewm-ul-li>span{
+            margin-bottom: 10px;
+        }
+        .mini-serve-desc{
+            display: inline-block;
+            width: 100vw;
+            margin-top: 20px;
+        }
+        .mini-serve-desc>.mini-serve-ul{
+            display: flex;
+            justify-content: space-around;
+            font-size: 14px;
+        }
+
         .pc-footer-content{
             display: none;
         }
@@ -229,6 +262,7 @@
             margin: 0;
             height: 24px;
             line-height: 20px;
+            font-size: 14px;
         }
     }
 </style>

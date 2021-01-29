@@ -40,6 +40,11 @@ const router = new Router({
       component: () => import("./views/introduction/Introduction")
     },
     {
+      path: "/process",
+      name: "process",
+      component: () => import("./views/process/Process")
+    },
+    {
       path: "/contact",
       name: "contact",
       component: () => import("./views/contact/ContactUS")

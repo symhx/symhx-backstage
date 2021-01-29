@@ -3,7 +3,9 @@
         <Header></Header>
         <Banner></Banner>
         <Server></Server>
-        <Introduction></Introduction>
+
+<!--        <Introduction></Introduction>-->
+        <Process></Process>
         <ContactUS></ContactUS>
         <Footer></Footer>
     </div>
@@ -14,12 +16,13 @@
     import Banner from "./banner/Banner";
     import Server from "./server/Server";
     import Introduction from "./introduction/Introduction";
+    import Process from "./process/Process";
     import ContactUS from "./contact/ContactUS";
     import Footer from "./footer/Footer";
     export default {
         name: "PreView",
         components: {
-            Header, Banner, Server, Introduction, ContactUS, Footer
+            Header, Banner, Server, ContactUS, Process, Footer
         }
     }
 </script>
