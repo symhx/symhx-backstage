@@ -10,24 +10,25 @@
         <p class="contact-desc-one">{{contactOne}}</p>
         <p class="contact-desc-two">{{contactTwo}}</p>
         <div class="contact-content">
+
             <div class="content-left">
-                <ul>
-                    <li>
-                        <span>Q  Q：</span><span>{{contentLeft.qq}}</span>
-                    </li>
-                    <li>
-                        <span>微信：</span><span>{{contentLeft.wx}}</span>
-                    </li>
-                    <li>
-                        <span>邮箱：</span><span>{{contentLeft.mail}}</span>
-                    </li>
-                    <li>
-                        <span>电话：</span><span>{{contentLeft.phone}}</span>
-                    </li>
-                    <li>
-                        <span>地址：</span><span>{{contentLeft.address}}</span>
-                    </li>
-                </ul>
+                <table>
+                    <tr>
+                        <td><span>Q  Q：</span></td><td><span>{{contentLeft.qq}}</span></td>
+                    </tr>
+                    <tr>
+                        <td><span>微信：</span></td><td><span>{{contentLeft.wx}}</span></td>
+                    </tr>
+                    <tr>
+                        <td><span>邮箱：</span></td><td><span>{{contentLeft.mail}}</span></td>
+                    </tr>
+                    <tr>
+                        <td><span>电话：</span></td><td><span>{{contentLeft.phone}}</span></td>
+                    </tr>
+                    <tr>
+                        <td><span>地址：</span></td><td><span>{{contentLeft.address}}</span></td>
+                    </tr>
+                </table>
             </div>
             <div class="content-right">
                 <form>
@@ -104,7 +105,7 @@
         -moz-user-select: none;
         -o-user-select: none;
         user-select: none;
-        font-size: 14px;
+        font-size: 16px;
     }
     .contact-title {
         text-align: center;
@@ -158,13 +159,36 @@
         display: flex;
         justify-content: flex-start;
     }
-    .content-left>ul{
-        position: relative;
+    .content-left>table {
         display: inline-block;
+        width: 100%;
+        height: 100%;
+        position: relative;
     }
-    .content-left>ul>li{
-        line-height: 52px;
+    .content-left>table>tr{
+        text-align: center;
+        display: inline-block;
+        width: 100%;
     }
+    .content-left>table>tr>td {
+        display: inline-block;
+        height: 45px;
+        line-height: 45px;
+    }
+    .content-left>table>tr>td{
+        width: 30%;
+    }
+    .content-left>table>tr>td{
+        width: 50%;
+    }
+    /*.content-left>ul {*/
+    /*    position: relative;*/
+    /*    display: inline-block;*/
+    /*    width: 100%;*/
+    /*}*/
+    /*.content-left>ul>li{*/
+    /*    line-height: 52px;*/
+    /*}*/
     .content-right>form{
         height: 100%;
         text-align: left;
@@ -186,7 +210,7 @@
         border: none;
         height: 45px;
         width: 55%;
-        text-indent: 14px;
+        text-indent: 16px;
         font-weight: 500;
         margin-left: 10px;
     }
@@ -197,7 +221,7 @@
         border: none;
         width: 55%;
         height: 157px;
-        text-indent: 14px;
+        text-indent: 16px;
         padding-top: 15px;
         position: relative;
         left: 10px;
