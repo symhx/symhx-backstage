@@ -2,6 +2,11 @@
     <div class="contact-wrap">
         <div class="contact-title">
             {{contactTitle}}
+            <div class="title-under-line">
+                <div>
+                    <i class="iconfont iconmessage"/>
+                </div>
+            </div>
         </div>
         <div class="mini-contact-title">
             {{miniContactTitle}}
@@ -34,13 +39,13 @@
                 <form>
                     <ul>
                         <li>
-                            <span>姓名：</span><input type="text" placeholder="您的称呼">
+                            <input type="text" placeholder="您的称呼">
                         </li>
                         <li>
-                            <span>电话：</span><input type="text" placeholder="您的电话号码">
+                            <input type="text" placeholder="您的电话号码">
                         </li>
                         <li>
-                            <span class="message">留言：</span><textarea type="text" style="resize: none" cols="10" rows="10" placeholder="留言内容"></textarea>
+                            <textarea type="text" style="resize: none" cols="10" rows="10" placeholder="留言内容"></textarea>
                         </li>
                         <li>
                             <div @click="delivery">投递</div>
@@ -106,32 +111,59 @@
         -o-user-select: none;
         user-select: none;
         font-size: 16px;
+        height: 90vh;
+        overflow: hidden;
     }
     .contact-title {
         text-align: center;
-        font-size: 32px;
+        font-size: 36px;
         position: relative;
-        color: #e4b685;
+        color: #fff;
         line-height: 72px;
         font-weight: 500;
-        padding: 20px 0;
+        padding: 60px 0 20px;
         letter-spacing: 2px;
     }
-    .contact-title::after {
-        content: '';
+    .title-under-line{
+        line-height: 58px;
+        height: 58px;
+    }
+    .title-under-line>div{
+        height: 20px;
+        line-height: 20px;
+        display: inline-block;
+        position: relative;
+    }
+    .title-under-line>div::before {
+        content: "";
         position: absolute;
-        width: 40px;
-        height: 2px;
-        background: #ccc;
-        left: 50%;
-        bottom: 0;
-        margin-left: -20px;
+        display: inline-block;
+        width: 100px;
+        height: 1px;
+        background: #e4b685;
+        top: 10px;
+        left: -110px;
+    }
+    .title-under-line>div::after {
+        content: "";
+        position: absolute;
+        display: inline-block;
+        width: 100px;
+        height: 1px;
+        background: #e4b685;
+        top: 10px;
+        left: 32px;
+    }
+
+    .title-under-line>div>i{
+        color: #e4b685;
+        vertical-align: top;
+        font-size: 20px;
     }
     .mini-contact-title{
         display: none;
     }
     .contact-desc {
-        margin-top: 25px;
         color: #a6a6b0;
         font-size: 16px;
         font-weight: 500;
@@ -139,10 +171,10 @@
     }
     .contact-content{
         display: flex;
-        margin-top: 50px;
         width: 100%;
         padding-top: 25px;
         justify-content: space-around;
+        height: 600px;
     }
     .content-left{
         position: relative;
@@ -151,6 +183,7 @@
         color: #a6a6b0;
         display: flex;
         justify-content: flex-end;
+        transform-origin: 50% 50%;
     }
     .content-right{
         position: relative;
@@ -160,48 +193,55 @@
         justify-content: flex-start;
     }
     .content-left>table {
-        display: inline-block;
+        display: flex;
         width: 100%;
-        height: 100%;
         position: relative;
+        flex-direction: column;
+        justify-content: center;
     }
     .content-left>table>tr{
         text-align: center;
         display: inline-block;
         width: 100%;
+        position: relative;
+        top: -60px;
     }
     .content-left>table>tr>td {
         display: inline-block;
-        height: 45px;
-        line-height: 45px;
+        height: 50px;
+        line-height: 50px;
+        font-family: '微软雅黑', '宋体', serif;
+        font-size: 14px;
+        color: #a6a6b0;
     }
-    .content-left>table>tr>td{
-        width: 30%;
-    }
-    .content-left>table>tr>td{
+    .content-left>table>tr>td:first-child{
         width: 50%;
+        text-align: right;
     }
-    /*.content-left>ul {*/
-    /*    position: relative;*/
-    /*    display: inline-block;*/
-    /*    width: 100%;*/
-    /*}*/
-    /*.content-left>ul>li{*/
-    /*    line-height: 52px;*/
-    /*}*/
+    .content-left>table>tr>td:last-child{
+        width: 50%;
+        text-align: left;
+    }
     .content-right>form{
         height: 100%;
         text-align: left;
+        width: 100%;
     }
     .content-right>form>ul{
         position: relative;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
     }
     .content-right>form>ul>li{
         line-height: 45px;
         margin-bottom: 15px;
-        width: 600px;
         color: #a6a6b0;
-        overflow: auto;
+        overflow: hidden;
+        width: 80%;
+        display: inline-block;
     }
     .content-right>form>ul>li>input{
         border-radius: 4px;
@@ -209,22 +249,20 @@
         outline: 0;
         border: none;
         height: 45px;
-        width: 55%;
+        width: 100%;
         text-indent: 16px;
         font-weight: 500;
-        margin-left: 10px;
     }
     .content-right>form>ul>li>textarea{
         border-radius: 4px;
         background: #f7f7f7;
         outline: 0;
         border: none;
-        width: 55%;
+        width: 100%;
         height: 157px;
         text-indent: 16px;
         padding-top: 15px;
         position: relative;
-        left: 10px;
         font-family: '微软雅黑', '宋体',serif;
     }
     .message{
@@ -236,7 +274,7 @@
         border: none;
         cursor: pointer;
         display: inline-block;
-        width: 330px;
+        width: 100%;
         height: 45px;
         text-align: center;
         line-height: 43px;
@@ -244,7 +282,6 @@
         border-radius: 4px;
         font-size: 16px;
         position: relative;
-        left: 60px;
     }
 
     textarea::-webkit-input-placeholder {
@@ -276,6 +313,7 @@
             background-image: url("../../assets/mobile-bg-01.jpg");
             background-size: 100% 100%;
             padding-bottom: 20px;
+            background-attachment: fixed;
         }
 
     }
@@ -284,6 +322,7 @@
             background-image: url("../../assets/mobile-bg-01.jpg");
             background-size: 100% 100%;
             padding-bottom: 20px;
+            background-attachment: fixed;
         }
         .contact-content {
             display: flex;
@@ -291,22 +330,30 @@
     }
     @media screen and (min-width: 0px) and (max-width:720px) {
         .contact-wrap {
-            /*background-image: url("../../assets/mobile-bg-01.jpg");*/
-            /*background-size: 100% 100%;*/
             padding: 15px;
+            height: 95vh;
         }
         .contact-title{
             display: none;
+        }
+        .contact-desc-one{
+            margin-top: 50px;
+        }
+        .contact-desc-two{
+            margin-bottom: 50px;
         }
         .mini-contact-title{
             display: inline-block;
             font-size: 24px;
             color: #333;
+            margin-top: 32px;
+            width: 100%;
         }
         .contact-content{
             display: inline-block;
-            margin-top: 0;
+            margin-top: 20px;
             padding-top: 0;
+            height: auto;
         }
         .contact-desc{
             display: none;
@@ -314,9 +361,14 @@
         .contact-desc-one,.contact-desc-two{
             display: block;
             color: #e4b685;
-            margin-top: 20px;
-            font-size: 20px;
+            margin-top: 50px;
+            font-size: 16px;
             font-weight: 500;
+            margin-bottom: 0;
+        }
+        .contact-desc-two{
+            margin-top: 10px;
+            margin-bottom: 50px;
         }
         .content-left{
             display: none;
@@ -336,7 +388,7 @@
         .content-right>form>ul>li:nth-child(4){
             display: flex;
             justify-content: center;
-            margin-top: 32px;
+            margin-top: 0;
         }
         .content-right>form>ul>li>span{
             display: none;
@@ -354,7 +406,7 @@
             background: #e4b685;
             left: unset;
             border-radius: 0;
-            width: 100%;
+            width: 40%;
         }
         .contact-tips{
             display: flex;

@@ -1,5 +1,17 @@
 <template>
     <div class="server-wrap">
+        <div class="server-title">
+            <p>我们的服务</p>
+<!--            <div class="mini-title">-->
+<!--                <span class="title-zh">我们的服务</span>-->
+<!--                <div class="title-en">PROCESS</div>-->
+<!--            </div>-->
+            <div class="title-under-line">
+                <div>
+                    <i class="iconfont iconfuwu"/>
+                </div>
+            </div>
+        </div>
         <main>
             <div class="blob">
                 <svg width="100vw" height="300" viewBox="0 0 600 600">
@@ -13,39 +25,16 @@
                 </svg>
             </div>
         </main>
-<!--        <h3>SERVICE CAPABILITIES</h3>-->
-<!--        <p>服务能力</p>-->
         <div class="main-header">
             <div>
-                <span class="server-title">开发服务</span>
                 <div class="server-item-wrap">
-                    <div class="develop">
-                        <div class="pc-web-site">
-                            <div class="pc-icon bg-position"></div>
-                            <div class="develop-desc">PC建设</div>
-                        </div>
-                        <div class="mobile-web-site">
-                            <div class="mobile-icon bg-position"></div>
-                            <div class="develop-desc">手机网站</div>
-                        </div>
-                        <div class="mini-program-site">
-                            <div class="mini-icon bg-position"></div>
-                            <div class="develop-desc">小程序</div>
-                        </div>
-                        <div class="h5-web-site">
-                            <div class="h5-icon bg-position"></div>
-                            <div class="develop-desc">H5</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div>
-                <span class="server-title">设计服务</span>
-                <div class="server-item-wrap">
-                    <ul>
-                        <li @click="setIndex(index)" :key="index" :class="['design-server-li',item.class, {'album-active': albumIndex===index}]" v-for="(item,index) in designList">
-                            <span class="iconfont" :class="item.icon"></span>
-                            <div class="server-title">{{item.label}}</div>
+                    <ul class="server-ul">
+                        <li :key="item.label" class="server-ul-li" v-for="item in serverList">
+                            <div class="server-bg">
+                                <img :src="item.imgPath" alt="">
+                            </div>
+                            <div class="server-name">{{item.label}}</div>
+                            <div class="server-desc">{{item.desc}}</div>
                         </li>
                     </ul>
                 </div>
@@ -60,29 +49,19 @@
         data() {
             return {
                 albumIndex: 0,
-                designList: [
-                    {label: '品牌包装', class: 'brand-clz', icon: 'icon-brand'},
-                    {label: '品牌/Logo/VI', class: 'design-clz', icon: 'icon-icon-design-'},
-                    {label: '画册/海报', class: 'album-clz', icon: 'icon-24gl-photoAlbum'},
+                serverList: [
+                    {icon: '', imgPath: require('../../assets/serve_bg1.png'), label: '自助建站', desc: '重点行业应用开发（SaaS、PaaS、CRM、HCM、银行核心系统、监管报送平台、系统搭建、人工智能助理）、大数据平台开发、商业智能、App开发、ERP、云平台、智'},
+                    {icon: '', imgPath: require('../../assets/serve_bg2.png'), label: '定制软件开发', desc: '重点行业应用开发（SaaS、PaaS、CRM、HCM、银行核心系统、监管报送平台、系统搭建、人工智能助理）、大数据平台开发、商业智能、App开发、ERP、云平台、智'},
+                    {icon: '', imgPath: require('../../assets/serve_bg3.png'), label: '品牌包装', desc: '重点行业应用开发（SaaS、PaaS、CRM、HCM、银行核心系统、监管报送平台、系统搭建、人工智能助理）、大数据平台开发、商业智能、App开发、ERP、云平台、智'},
+                    {icon: '', imgPath: require('../../assets/serve_bg1.png'), label: 'Logo、Vi、画册设计', desc: '重点行业应用开发（SaaS、PaaS、CRM、HCM、银行核心系统、监管报送平台、系统搭建、人工智能助理）、大数据平台开发、商业智能、App开发、ERP、云平台、智'}
                 ]
             };
         },
         mounted() {
-            setInterval(this.timeOut, 3000);
         },
         created() {
         },
         methods: {
-            timeOut() {
-                if (this.albumIndex < this.designList.length - 1) {
-                    this.albumIndex++;
-                } else {
-                    this.albumIndex = 0;
-                }
-            },
-            setIndex(index) {
-                this.albumIndex = index;
-            }
         },
         destroyed() {
         }
@@ -91,7 +70,95 @@
 
 <style scoped>
     .server-wrap{
-        position: relative;;
+        position: relative;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -o-user-select: none;
+        user-select: none;
+    }
+    @media screen and (min-width:721px){
+        main{
+            display: none;
+        }
+        .server-title>p {
+            margin: 0;
+            display: inline-block;
+            width: 100%;
+            height: 80px;
+            line-height: 100px;
+            font-size: 32px;
+            color: #333;
+        }
+        .title-under-line{
+            height: 58px;
+            line-height: 58px;
+        }
+        .title-under-line>div{
+            height: 20px;
+            line-height: 20px;
+            display: inline-block;
+            position: relative;
+        }
+        .title-under-line>div::before {
+            content: "";
+            position: absolute;
+            display: inline-block;
+            width: 100px;
+            height: 1px;
+            background: #e4b685;
+            top: 10px;
+            left: -110px;
+        }
+        .title-under-line>div::after {
+            content: "";
+            position: absolute;
+            display: inline-block;
+            width: 100px;
+            height: 1px;
+            background: #e4b685;
+            top: 10px;
+            left: 32px;
+        }
+
+        .title-under-line>div>i{
+            color: #e4b685;
+            vertical-align: top;
+            font-size: 20px;
+        }
+
+        .server-title>span{
+            display: inline-block;
+            width: 100%;
+            color: #a6a6b0;
+            margin-top: 36px;
+        }
+        .server-item-wrap>.server-ul{
+            display: flex;
+            justify-content: space-around;
+            width: 80vw;
+            margin: 0 10vw;
+        }
+        .server-item-wrap>.server-ul>.server-ul-li{
+            margin: 0 5px;
+            border: 1px solid #e5e5e5;
+            padding-bottom: 15px;
+        }
+        .server-item-wrap>.server-ul>.server-ul-li>.server-bg>img{
+            width: 100%;
+            height: 170px;
+        }
+        .server-item-wrap>.server-ul>.server-ul-li>.server-name {
+            font-size: 24px;
+            margin: 20px 0 10px;
+            padding: 10px 0 20px;
+        }
+        .server-item-wrap>.server-ul>.server-ul-li>.server-desc{
+            line-height: 21px;
+            padding: 0 16px 0 22px;
+            font-size: 12px;
+            overflow: hidden;
+            text-align: left;
+        }
     }
     @media screen and (min-width: 0px) and (max-width:720px) {
         main {

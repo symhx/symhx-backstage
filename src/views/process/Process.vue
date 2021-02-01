@@ -2,6 +2,15 @@
     <div class="process-wrap">
         <div class="process-title">
             <p>品牌产品制作流程</p>
+            <div class="mini-title">
+                <span class="title-zh">服务流程</span>
+                <div class="title-en">PROCESS</div>
+            </div>
+            <div class="title-under-line">
+                <div>
+                    <i class="iconfont iconliucheng2"/>
+                </div>
+            </div>
             <span>我们通过专业的流程与丰富的经验实现了在品牌设计创新的承诺</span>
         </div>
         <div class="process-step">
@@ -56,7 +65,7 @@
         margin-bottom: 40px;
     }
     .process-step{
-        margin-top: 50px;
+        margin-top: 80px;
     }
     .process-step>ul{
         display: flex;
@@ -68,16 +77,17 @@
         position: absolute;
         display: inline-block;
         width: 90vw;
-        height: 1px;
+        height: 2px;
         background: #a6a6b0;
         top: 50px;
         z-index: -1;
+        opacity: .4;
     }
     .process-step>ul>li>i {
         cursor: pointer;
         display: inline-block;
         font-size: 50px;
-        color: #3e3e3e;
+        color: #9e9e9e;
         height: 100px;
         line-height: 100px;
         transition: all .25s linear;
@@ -92,6 +102,9 @@
     }
     .process-step>ul>li>i:hover {
         color: #e4b685;
+    }
+    .process-step>ul>li>i:hover:before {
+        border-color: #e4b685;;
     }
     .process-step>ul>li>div{
         margin-top: 40px;
@@ -124,22 +137,121 @@
     }
     /*=================响应式代码=====================*/
     @media screen and (min-width: 721px) {
+        .process-wrap{
+            height: 60vh;
+        }
         .process-title>p {
             margin: 0;
             display: inline-block;
             width: 100%;
-            height: 100px;
+            height: 80px;
             line-height: 100px;
-            font-size: 24px;
+            font-size: 32px;
             color: #333;
         }
+        .mini-title{
+            display: none;
+        }
+        .title-under-line{
+            height: 58px;
+            line-height: 58px;
+        }
+        .title-under-line>div{
+            height: 20px;
+            line-height: 20px;
+            display: inline-block;
+            position: relative;
+        }
+        .title-under-line>div::before {
+            content: "";
+            position: absolute;
+            display: inline-block;
+            width: 100px;
+            height: 1px;
+            background: #e4b685;
+            top: 10px;
+            left: -110px;
+        }
+        .title-under-line>div::after {
+            content: "";
+            position: absolute;
+            display: inline-block;
+            width: 100px;
+            height: 1px;
+            background: #e4b685;
+            top: 10px;
+            left: 32px;
+        }
+
+        .title-under-line>div>i{
+            color: #e4b685;
+            vertical-align: top;
+            font-size: 20px;
+        }
+
         .process-title>span{
             display: inline-block;
             width: 100%;
             color: #a6a6b0;
+            margin-top: 36px;
         }
     }
     @media screen and (min-width: 0px) and (max-width:720px) {
-
+        .process-wrap{
+            margin-bottom: 0;
+            font-family: '微软雅黑', '宋体', serif;
+            background: #f7f9fa;
+        }
+        .process-title>p {
+            display: none;
+        }
+        .process-title>.mini-title {
+            margin: 0;
+            display: inline-block;
+            width: 100%;
+            font-size: 20px;
+            color: #333;
+            text-align: center;
+            height: 91px;
+            position: relative;
+            padding: 47px 0 0;
+        }
+        .process-title>span {
+            font-size: 14px;
+            color: #333333;
+            display: inline-block;
+            margin-top: 40px;
+        }
+        .process-step>ul>li>i{
+            width: 100%;
+        }
+        .process-step>ul>li>i::before{
+            border-radius: 0;
+            border: 0;
+            background: unset;
+        }
+        .process-step>ul>li>div{
+            margin-top: 0;
+        }
+        .title-en{
+            display: block;
+            color: #ababab;
+            font-size: 16px;
+        }
+        .title-under-line{
+            display: none;
+        }
+        .process-step>ul{
+            flex-direction: column;
+        }
+        .process-step>ul>li{
+            background: #ffffff;
+            box-shadow: 0 0 10px #eaeaea;
+            margin-bottom: 10px;
+            padding-bottom: 20px;
+        }
+        .process-ul::before{
+            display: none!important;
+        }
     }
 </style>
