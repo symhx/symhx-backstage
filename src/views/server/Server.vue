@@ -8,9 +8,10 @@
 <!--            </div>-->
             <div class="title-under-line">
                 <div>
-                    <i class="iconfont iconfuwu"/>
+                    <i class="iconfont iconfuwu1"/>
                 </div>
             </div>
+            <span>专注高端网站建设、微信开发、品牌建设、LOGO业务</span>
         </div>
         <main>
             <div class="blob">
@@ -32,9 +33,55 @@
                         <li :key="item.label" class="server-ul-li" v-for="item in serverList">
                             <div class="server-bg">
                                 <img :src="item.imgPath" alt="">
+                                <div class="server-name">{{item.label}}</div>
                             </div>
-                            <div class="server-name">{{item.label}}</div>
-                            <div class="server-desc">{{item.desc}}</div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div>
+            <div class="features-title">
+                <p>特色功能</p>
+                <div class="title-under-line">
+                    <div>
+                        <i class="iconfont icongongnengdingyi"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="server-row">
+            <div class="img-left">
+                <img src="../../assets/server-img.webp" width="404px" alt="">
+            </div>
+            <div class="server-right-wrap">
+                <div class="server-middle">
+                    <ul>
+                        <li :key="item.title" v-for="item in middleSpecifically">
+                            <div>
+                                <img :src="item.icon" alt="">
+                                <span class="title">{{item.title}}</span>
+                            </div>
+                            <div>
+                                <span class="desc">
+                                    {{item.desc}}
+                                </span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="server-right">
+                    <ul>
+                        <li :key="item.title" v-for="item in rightSpecifically">
+                            <div>
+                                <img :src="item.icon" alt="">
+                                <span class="title">{{item.title}}</span>
+                            </div>
+                            <div>
+                                <span class="desc">
+                                    {{item.desc}}
+                                </span>
+                            </div>
                         </li>
                     </ul>
                 </div>
@@ -50,10 +97,44 @@
             return {
                 albumIndex: 0,
                 serverList: [
-                    {icon: '', imgPath: require('../../assets/serve_bg1.png'), label: '自助建站', desc: '重点行业应用开发（SaaS、PaaS、CRM、HCM、银行核心系统、监管报送平台、系统搭建、人工智能助理）、大数据平台开发、商业智能、App开发、ERP、云平台、智'},
-                    {icon: '', imgPath: require('../../assets/serve_bg2.png'), label: '定制软件开发', desc: '重点行业应用开发（SaaS、PaaS、CRM、HCM、银行核心系统、监管报送平台、系统搭建、人工智能助理）、大数据平台开发、商业智能、App开发、ERP、云平台、智'},
-                    {icon: '', imgPath: require('../../assets/serve_bg3.png'), label: '品牌包装', desc: '重点行业应用开发（SaaS、PaaS、CRM、HCM、银行核心系统、监管报送平台、系统搭建、人工智能助理）、大数据平台开发、商业智能、App开发、ERP、云平台、智'},
-                    {icon: '', imgPath: require('../../assets/serve_bg1.png'), label: 'Logo、Vi、画册设计', desc: '重点行业应用开发（SaaS、PaaS、CRM、HCM、银行核心系统、监管报送平台、系统搭建、人工智能助理）、大数据平台开发、商业智能、App开发、ERP、云平台、智'}
+                    {icon: '', imgPath: require('../../assets/server-bg-01.webp'), label: '网站建设', desc: ''},
+                    {icon: '', imgPath: require('../../assets/server-bg-02.webp'), label: '微信开发', desc: ''},
+                    {icon: '', imgPath: require('../../assets/server-bg-03.webp'), label: '品牌包装', desc: ''},
+                    {icon: '', imgPath: require('../../assets/server-bg-01.webp'), label: 'Logo/VI/画册设计', desc: ''}
+                ],
+                middleSpecifically: [
+                    {
+                        title: '多平台应用',
+                        icon: require('../../assets/pt-img.svg'),
+                        desc: '您可以双击这里或者点击编辑按钮来修改内容，您还可以添加图标，按钮，图片等常用元素。'
+                    },
+                    {
+                        title: '交互体验',
+                        icon: require('../../assets/jh-img.svg'),
+                        desc: '您可以双击这里或者点击编辑按钮来修改内容，您还可以添加图标，按钮，图片等常用元素。'
+                    },
+                    {
+                        title: '功能控件',
+                        icon: require('../../assets/fun-img.svg'),
+                        desc: '您可以双击这里或者点击编辑按钮来修改内容，您还可以添加图标，按钮，图片等常用元素。'
+                    }
+                ],
+                rightSpecifically: [
+                    {
+                        title: '响应式设计',
+                        icon: require('../../assets/xys-img.svg'),
+                        desc: '全面实效的数据分析，专业的网站制作策划和顾问团队，帮您建立品牌知名度，为您的网站开发成功助力！'
+                    },
+                    {
+                        title: '万能表单',
+                        icon: require('../../assets/bd-img.svg'),
+                        desc: '您可以双击这里或者点击编辑按钮来修改内容，您还可以添加图标，按钮，图片等常用元素。'
+                    },
+                    {
+                        title: '自定义页面',
+                        icon: require('../../assets/diy-img.svg'),
+                        desc: '您可以双击这里或者点击编辑按钮来修改内容，您还可以添加图标，按钮，图片等常用元素。'
+                    }
                 ]
             };
         },
@@ -75,12 +156,14 @@
         -moz-user-select: none;
         -o-user-select: none;
         user-select: none;
+        background: url("../../assets/index_ab_bg.jpg");
+        background-size: 100% 100%;
     }
     @media screen and (min-width:721px){
         main{
             display: none;
         }
-        .server-title>p {
+        .server-title>p, .features-title>p{
             margin: 0;
             display: inline-block;
             width: 100%;
@@ -140,24 +223,98 @@
         }
         .server-item-wrap>.server-ul>.server-ul-li{
             margin: 0 5px;
-            border: 1px solid #e5e5e5;
-            padding-bottom: 15px;
+        }
+        .server-item-wrap>.server-ul>.server-ul-li>.server-bg{
+            position: relative;
+        }
+        .server-item-wrap>.server-ul>.server-ul-li>.server-bg>.server-name {
+            position: absolute;
+            display: inline-block;
+            width: 100%;
+            text-align: center;
+            bottom: 10px;
+            left: 0;
+            z-index: 1;
+            font-size: 20px;
+            color: #fff;
         }
         .server-item-wrap>.server-ul>.server-ul-li>.server-bg>img{
             width: 100%;
             height: 170px;
+            vertical-align: bottom;
         }
-        .server-item-wrap>.server-ul>.server-ul-li>.server-name {
-            font-size: 24px;
-            margin: 20px 0 10px;
-            padding: 10px 0 20px;
+        .server-item-wrap>.server-ul>.server-ul-li:last-child{
+            filter: grayscale(1);
         }
-        .server-item-wrap>.server-ul>.server-ul-li>.server-desc{
-            line-height: 21px;
-            padding: 0 16px 0 22px;
-            font-size: 12px;
-            overflow: hidden;
+        .main-header{
+            margin-top: 50px;
+        }
+        .server-row{
+            display: flex;
+            justify-content: space-around;
+            position: relative;
+            padding: 0 5vw;
+        }
+        .server-row>.img-left{
+            margin-top: 120px;
+            animation-direction: normal;
+            animation-fill-mode: none;
+            animation-play-state: running;
+            animation-name: shakeUp;
+            animation-delay: 0s;
+            animation-timing-function: ease;
+            animation-duration: 3s;
+            animation-iteration-count: infinite;
+            opacity: 1;
+            position: relative;
+            width: 40%;
+        }
+        .server-right-wrap{
+            width: 60%;
+            display: flex;
+            justify-content: center;
+        }
+        @keyframes shakeUp {
+            0% {
+                top: 0;
+            }
+            50% {
+                top: 20px;
+            }
+            100%{
+                top: 0;
+            }
+        }
+        .server-middle>ul>li,.server-right>ul>li {
+            height: 190px;
+            width: 300px;
+            border: 1px solid rgba(236,236,236,1);
+            margin: 15px;
+            background: #ffffff;
+            padding: 30px 20px;
             text-align: left;
+        }
+        .server-middle>ul>li:hover,.server-right>ul>li:hover {
+            border: 1px solid rgba(255,255,255,1);
+            box-shadow: 0 0 15px #deebf2 !important;
+        }
+        .server-middle>ul>li>div>img,.server-right>ul>li>div>img{
+            vertical-align: middle;
+        }
+        .server-middle>ul>li>div>.title,.server-right>ul>li>div>.title{
+            font-size: 18px;
+            color: #222d39;
+            font-weight: bold;
+            display: inline-block;
+            margin-left: 20px;
+        }
+        .server-middle>ul>li>div>.desc,.server-right>ul>li>div>.desc{
+            color: rgb(103, 114, 148);
+            font-size: 13px;
+            display: inline-block;
+            padding-left: 65px;
+            line-height: 26px;
+            letter-spacing: inherit;
         }
     }
     @media screen and (min-width: 0px) and (max-width:720px) {

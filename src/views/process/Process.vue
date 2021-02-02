@@ -8,7 +8,7 @@
             </div>
             <div class="title-under-line">
                 <div>
-                    <i class="iconfont iconliucheng2"/>
+                    <i class="iconfont iconyewuliuchengguanli"/>
                 </div>
             </div>
             <span>我们通过专业的流程与丰富的经验实现了在品牌设计创新的承诺</span>
@@ -57,12 +57,11 @@
 <style scoped>
     .process-wrap{
         position: relative;
-        padding: 15px;
         -webkit-user-select: none;
         -moz-user-select: none;
         -o-user-select: none;
         user-select: none;
-        margin-bottom: 40px;
+        margin: 0 5vw 40px 5vw;
     }
     .process-step{
         margin-top: 80px;
@@ -138,7 +137,7 @@
     /*=================响应式代码=====================*/
     @media screen and (min-width: 721px) {
         .process-wrap{
-            height: 60vh;
+            height: 66vh;
         }
         .process-title>p {
             margin: 0;
