@@ -1,7 +1,7 @@
 <template>
     <div class="process-wrap">
         <div class="process-title">
-            <p>品牌产品制作流程</p>
+            <p>品牌/产品建设流程</p>
             <div class="mini-title">
                 <span class="title-zh">服务流程</span>
                 <div class="title-en">PROCESS</div>
@@ -145,8 +145,8 @@
             width: 100%;
             height: 80px;
             line-height: 100px;
-            font-size: 32px;
-            color: #333;
+            font-size: 26px;
+            color: #454545;
         }
         .mini-title{
             display: none;
@@ -233,7 +233,6 @@
             margin-top: 0;
         }
         .title-en{
-            display: block;
             color: #ababab;
             font-size: 16px;
         }

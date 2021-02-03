@@ -116,7 +116,7 @@
     }
     .contact-title {
         text-align: center;
-        font-size: 36px;
+        font-size: 28px;
         position: relative;
         color: #fff;
         line-height: 72px;
