@@ -40,7 +40,7 @@
             </div>
             <div class="server-row">
                 <div class="img-left">
-                    <img src="../../assets/kf.svg" width="100%" alt="">
+                    <img src="../../assets/pp.svg" width="500px" alt="">
                 </div>
                 <div class="server-right-wrap">
                     <div class="server-middle">
@@ -83,43 +83,6 @@
                             <i class="iconfont iconpinpaix"/>
                         </div>
                     </div>
-                </div>
-            </div>
-            <div class="server-row">
-                <div class="server-right-wrap">
-                    <div class="server-middle">
-                        <ul>
-                            <li :key="item.title" v-for="item in middleSpecifically">
-                                <div>
-                                    <img :src="item.icon" alt="">
-                                    <span class="title">{{item.title}}</span>
-                                </div>
-                                <div>
-                                <span class="desc">
-                                    {{item.desc}}
-                                </span>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="server-right">
-                        <ul>
-                            <li :key="item.title" v-for="item in rightSpecifically">
-                                <div>
-                                    <img :src="item.icon" alt="">
-                                    <span class="title">{{item.title}}</span>
-                                </div>
-                                <div>
-                                <span class="desc">
-                                    {{item.desc}}
-                                </span>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="img-left">
-                    <img src="../../assets/pp.svg" width="100%" alt="">
                 </div>
             </div>
         </div>
@@ -178,7 +141,8 @@
                     {title: '包装'},
                     {title: '海报'},
                     {title: '画册'},
-                    {title: '折页'}
+                    {title: '折页'},
+                    {title: '网站设计'}
                 ]
             };
         },
@@ -317,7 +281,7 @@
             padding: 0 5vw;
         }
         .server-row>.img-left{
-            margin-top: 0;
+            margin-top: 5%;
             animation-direction: normal;
             animation-fill-mode: none;
             animation-play-state: running;

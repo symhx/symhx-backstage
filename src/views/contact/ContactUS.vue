@@ -1,40 +1,21 @@
 <template>
     <div class="contact-wrap">
-        <div class="contact-title">
-            {{contactTitle}}
-            <div class="title-under-line">
-                <div>
-                    <i class="iconfont iconmessage"/>
+        <div class="contact-top">
+            <div class="contact-title">
+                <span class="server-title">{{contactTitle}}</span>
+                <div class="title-under-line">
+                    <div>
+                        <i class="iconfont iconmessage"/>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="mini-contact-title">
-            {{miniContactTitle}}
-        </div>
-        <p class="contact-desc">{{contactDesc}}</p>
-        <p class="contact-desc-one">{{contactOne}}</p>
-        <p class="contact-desc-two">{{contactTwo}}</p>
-        <div class="contact-content">
-
-            <div class="content-left">
-                <table>
-                    <tr>
-                        <td><span>Q  Q：</span></td><td><span>{{contentLeft.qq}}</span></td>
-                    </tr>
-                    <tr>
-                        <td><span>微信：</span></td><td><span>{{contentLeft.wx}}</span></td>
-                    </tr>
-                    <tr>
-                        <td><span>邮箱：</span></td><td><span>{{contentLeft.mail}}</span></td>
-                    </tr>
-                    <tr>
-                        <td><span>电话：</span></td><td><span>{{contentLeft.phone}}</span></td>
-                    </tr>
-                    <tr>
-                        <td><span>地址：</span></td><td><span>{{contentLeft.address}}</span></td>
-                    </tr>
-                </table>
+            <div class="mini-contact-title">
+                <span>{{miniContactTitle}}</span>
             </div>
+            <p class="contact-desc-start">{{contactDescStart}}</p>
+            <p class="contact-desc-end">{{contactDescEnd}}</p>
+        </div>
+        <div class="contact-content">
             <div class="content-right">
                 <form>
                     <ul>
@@ -52,6 +33,19 @@
                         </li>
                     </ul>
                 </form>
+            </div>
+            <div class="content-left">
+                <table>
+                    <tr>
+                        <td><i class="iconfont icondizhi"/><span>{{contentLeft.address}}</span></td>
+                    </tr>
+                    <tr>
+                        <td><i class="iconfont iconmobile-fill"/><span>{{contentLeft.phone}}</span></td>
+                    </tr>
+                    <tr>
+                        <td><i class="iconfont iconemail"/><span>{{contentLeft.mail}}</span></td>
+                    </tr>
+                </table>
             </div>
         </div>
         <el-dialog
@@ -71,14 +65,13 @@
                 // 文本属性
                 contactTitle: '联系我们',
                 miniContactTitle: '欢迎您给我们留言！',
-                contactDesc: '为您提供定制产品和品牌设计服务, 让您的创意成为可能',
+                contactDescStart: '无论是业务资讯或是意见反馈',
+                contactDescEnd: '都可以联系我们，我们将24小时都为您服务',
                 contactOne: '为您提供定制产品和品牌设计服务',
                 contactTwo: '让您的创意成为可能',
                 // 数据对象
                 contentLeft: {
-                    qq: '1766470919',
-                    wx: 'Jun1766470919',
-                    mail: '1766470919@qq.com',
+                    mail: 'symhx@foxmail.com',
                     phone: '184 8365 0305',
                     address: '成都市高新区天府软件园G1区1206'
                 },
@@ -105,14 +98,14 @@
 <style scoped>
     .contact-wrap {
         width: 100%;
-        font-family: '微软雅黑','宋体',serif;
+        font-family: '微软雅黑', '宋体', serif;
         -webkit-user-select: none;
         -moz-user-select: none;
         -o-user-select: none;
         user-select: none;
         font-size: 16px;
-        height: 90vh;
         overflow: hidden;
+        height: auto;
     }
     .contact-title {
         text-align: center;
@@ -123,6 +116,10 @@
         font-weight: 500;
         padding: 60px 0 20px;
         letter-spacing: 2px;
+    }
+    .server-title{
+        display: inline-block;
+        font-size: 40px;
     }
     .title-under-line{
         line-height: 58px;
@@ -163,23 +160,44 @@
     .mini-contact-title{
         display: none;
     }
-    .contact-desc {
-        color: #a6a6b0;
+    .contact-desc-start,.contact-desc-end {
+        color: #f5f5f5;
         font-size: 16px;
         font-weight: 500;
         display: block;
     }
+    .contact-desc-start::before {
+        content: "\e641";
+        display: inline-block;
+        font-family: iconfont,serif;
+        font-size: 26px;
+        font-style: normal;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        position: relative;
+        top: -2px;
+    }
+    .contact-desc-end::after {
+        content: "\e63e";
+        display: inline-block;
+        font-family: iconfont,serif;
+        font-size: 26px;
+        font-style: normal;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        position: relative;
+        top: -2px;
+    }
     .contact-content{
         display: flex;
         width: 100%;
-        padding-top: 25px;
         justify-content: space-around;
-        height: 600px;
+        margin-top: 50px;
     }
     .content-left{
         position: relative;
         text-align: left;
-        width: 50%;
+        width: 40%;
         color: #a6a6b0;
         display: flex;
         justify-content: flex-end;
@@ -187,10 +205,11 @@
     }
     .content-right{
         position: relative;
-        width: 50%;
+        width: 60%;
         color: #666;
         display: flex;
         justify-content: flex-start;
+        padding: 20px 0;
     }
     .content-left>table {
         display: flex;
@@ -208,18 +227,14 @@
     }
     .content-left>table>tr>td {
         display: inline-block;
-        height: 50px;
-        line-height: 50px;
+        height: 58px;
+        line-height: 58px;
         font-family: '微软雅黑', '宋体', serif;
         font-size: 14px;
         color: #a6a6b0;
     }
-    .content-left>table>tr>td:first-child{
-        width: 50%;
-        text-align: right;
-    }
-    .content-left>table>tr>td:last-child{
-        width: 50%;
+    .content-left>table>tr>td{
+        width: 100%;
         text-align: left;
     }
     .content-right>form{
@@ -240,8 +255,19 @@
         margin-bottom: 15px;
         color: #a6a6b0;
         overflow: hidden;
-        width: 80%;
+        width: 50%;
         display: inline-block;
+    }
+    .content-right>form>ul>li:last-child{
+        /*width: 160px;*/
+        display: flex;
+        justify-content: flex-end;
+    }
+    .content-right>form>ul>li:last-child>div{
+        width: 160px;
+    }
+    .content-right>form>ul>li:last-child>div{
+        font-size: 14px;
     }
     .content-right>form>ul>li>input{
         border-radius: 4px;
@@ -252,6 +278,7 @@
         width: 100%;
         text-indent: 16px;
         font-weight: 500;
+        color: #333333;
     }
     .content-right>form>ul>li>textarea{
         border-radius: 4px;
@@ -260,10 +287,11 @@
         border: none;
         width: 100%;
         height: 157px;
-        text-indent: 16px;
+        padding: 16px;
         padding-top: 15px;
         position: relative;
         font-family: '微软雅黑', '宋体',serif;
+        color: #333333;
     }
     .message{
         float: left;
@@ -304,71 +332,135 @@
         color: #757575;
         font-family: '微软雅黑', '宋体',serif;
     }
-    .contact-desc-one,.contact-desc-two{
-        display: none;
-    }
     /*=================响应式代码=====================*/
     @media screen and (min-width: 1221px) {
         .contact-wrap {
-            background-image: url("../../assets/mobile-bg-01.jpg");
-            background-size: 100% 100%;
             padding-bottom: 20px;
-            background-attachment: fixed;
         }
-
+        .contact-top {
+            background-image: url("../../assets/contact-us-bg.png");
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
+            background-position: center center;
+            position: relative;
+            overflow: hidden;
+            width: auto;
+            height: auto;
+            min-height: 350px;
+        }
+        .contact-top::after {
+            content: "";
+            width: 330px;
+            height: 604px;
+            display: inline-block;
+            background: #ffffff;
+            position: absolute;
+            top: -130px;
+            left: 49%;
+            opacity: .42;
+            transform: rotate(30deg);
+        }
+        .content-left i{
+            font-size: 24px;
+            vertical-align: middle;
+            display: inline-block;
+            margin-right: 10px;
+            color: #7b9ee7;
+        }
+        .content-left span{
+            color: #333333;
+            font-weight: 500;
+            font-family: '微软雅黑', '宋体', serif;
+        }
     }
     @media screen and (min-width: 721px) and (max-width:1220px){
         .contact-wrap{
-            background-image: url("../../assets/mobile-bg-01.jpg");
-            background-size: 100% 100%;
             padding-bottom: 20px;
-            background-attachment: fixed;
         }
         .contact-content {
             display: flex;
         }
+        .contact-top::after {
+            content: "";
+            width: 330px;
+            height: 530px;
+            display: inline-block;
+            background: #ffffff;
+            position: absolute;
+            top: -120px;
+            left: 49%;
+            opacity: .42;
+            transform: rotate(30deg);
+        }
+        .contact-top{
+            background-image: url("../../assets/contact-us-bg.png");
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
+            background-position: center center;
+            position: relative;
+            overflow: hidden;
+            width: auto;
+            height: auto;
+        }
+        .contact-title{
+            text-align: center;
+            font-size: 28px;
+            position: relative;
+            color: #fff;
+            line-height: 72px;
+            font-weight: 500;
+            padding: 32px 0 20px;
+            letter-spacing: 2px;
+        }
+        .content-left i {
+            font-size: 24px;
+            vertical-align: middle;
+            display: inline-block;
+            margin-right: 10px;
+            color: #7b9ee7;
+        }
+        .content-left span {
+            color: #333333;
+        }
+        .content-right>form>ul>li{
+            width: 70%;
+        }
     }
     @media screen and (min-width: 0px) and (max-width:720px) {
+        .contact-top {
+            position: relative;
+            overflow: hidden;
+            width: auto;
+            height: auto;
+        }
         .contact-wrap {
             padding: 15px;
-            height: 95vh;
         }
         .contact-title{
             display: none;
         }
-        .contact-desc-one{
-            margin-top: 50px;
-        }
-        .contact-desc-two{
-            margin-bottom: 50px;
-        }
         .mini-contact-title{
-            display: inline-block;
-            font-size: 24px;
-            color: #333;
-            margin-top: 32px;
-            width: 100%;
+
         }
         .contact-content{
             display: inline-block;
-            margin-top: 20px;
             padding-top: 0;
             height: auto;
+            margin-top: 0;
         }
-        .contact-desc{
+        .mini-contact-title{
+            color: #333;
+            min-height: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            width: 100%;
+            position: relative;
+            z-index: 5;
+        }
+        .contact-desc-start, .contact-desc-end {
             display: none;
-        }
-        .contact-desc-one,.contact-desc-two{
-            display: block;
-            color: #e4b685;
-            margin-top: 50px;
-            font-size: 16px;
-            font-weight: 500;
-            margin-bottom: 0;
-        }
-        .contact-desc-two{
-            margin-top: 10px;
-            margin-bottom: 50px;
         }
         .content-left{
             display: none;
