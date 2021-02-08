@@ -16,7 +16,7 @@
                 imageList: [
                     require('../../assets/web-bg-02.jpg'),
                     require('../../assets/web-bg-03.png'),
-                    require('../../assets/web-bg-04.jpg'),
+                    require('../../assets/banner_04.png'),
                 ],
                 bannerIndex: 1,
                 initBannerIndex: 0,
@@ -42,7 +42,7 @@
 
 <style scoped>
     .banner-wrap {
-        padding-top: 60px;
+        padding-top: 70px;
         position: relative;
         overflow: hidden;
         width: 100vw;

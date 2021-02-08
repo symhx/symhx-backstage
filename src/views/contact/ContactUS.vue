@@ -365,7 +365,7 @@
             vertical-align: middle;
             display: inline-block;
             margin-right: 10px;
-            color: #7b9ee7;
+            color: #e4b685;
         }
         .content-left span{
             color: #333333;
@@ -417,7 +417,7 @@
             vertical-align: middle;
             display: inline-block;
             margin-right: 10px;
-            color: #7b9ee7;
+            color: #e4b685;
         }
         .content-left span {
             color: #333333;

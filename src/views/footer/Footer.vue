@@ -60,9 +60,9 @@
                 year: 0,
                 copyright: '',
                 descInfoList: [
-                    {title: '首页', itemList: ['产品', '服务', '案例', '流程', '关于']},
+                    {title: '首页', itemList: ['产品', '模板', '方案', '案例', '流程', '关于']},
                     {title: '产品中心', itemList: ['苏码', '苏表单', '苏网站']},
-                    {title: '联系我们', itemList: [{icon: 'icondianhua', label: '18483650305'}, {icon: 'iconservice', label: '工作日 9:00-18:00'}, {icon: 'iconxinfengbeifen', label: 'symhx@foxmail.com'}, {icon: 'icondingwei', label: '成都市高新区天府软件园G1区12层'}]}
+                    {title: '联系我们', itemList: [{icon: 'icondianhua', label: '184 8365 0305'}, {icon: 'iconservice', label: '工作日 9:00-18:00'}, {icon: 'iconxinfengbeifen', label: 'symhx@foxmail.com'}, {icon: 'icondingwei', label: '成都市高新区天府软件园G1区12层'}]}
                 ],
                 miniServeDescList: [
                     '服务', '案例', '流程', '关于', '联系'

@@ -32,13 +32,13 @@
                 showEnable: false,
                 intro: [
                     {label: '首页'},
-                    {label: '产品'},
-                    // {label: '简介'},
-                    {label: '业务'},
+                    {label: '自助建站'},
+                    {label: '定制软件'},
+                    {label: '品牌建设'},
                     // {label: '产品'},
-                    {label: '服务'},
-                    // '案例',
-                    {label: '联系'}
+                    // {label: '简介'},
+                    // {label: '产品'},
+                    {label: '联系我们'}
                 ],
                 miniIntro: [
                     {label: '首页'},
@@ -69,7 +69,7 @@
 
 <style scoped>
     .header-wrap {
-        background: #fff;
+        background-image: url("../../assets/footer-bg.png");
         width: 100%;
         display: flex;
         justify-content: center;
@@ -80,7 +80,7 @@
         z-index: 99;
     }
     .header-content {
-        font-family: "PingFang SC";
+        font-family: "PingFang SC",serif;
         font-weight: 600;
         width: 80%;
         display: flex;
@@ -95,11 +95,11 @@
         justify-content: center;
     }
     .desc-right>ul>li{
-        height: 60px;
-        line-height: 60px;
-        color: #4e4e4e;
+        height: 70px;
+        line-height: 70px;
+        color: #a6a6b0;
         cursor: pointer;
-        width: 12%;
+        width: 15%;
     }
     .desc-right>ul>li:hover{
         color: #c7a480;
@@ -146,6 +146,9 @@
         }
         .desc-right>span{
             display: none;
+        }
+        .desc-right>ul>li{
+            font-size: 14px;
         }
 
     }
@@ -249,8 +252,8 @@
             padding-top: 15px;
         }
         .hide-serve-list>ul>li{
-            font-family: "PingFang SC";
-            line-height: 58px;
+            font-family: "PingFang SC",serif;
+            line-height: 68px;
             font-size: 24px;
         }
     }

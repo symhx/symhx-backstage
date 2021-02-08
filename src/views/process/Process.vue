@@ -11,7 +11,8 @@
                     <i class="iconfont iconyewuliuchengguanli"/>
                 </div>
             </div>
-            <span>我们通过专业的流程与丰富的经验实现了在品牌设计创新的承诺</span>
+            <span>通过专业的流程与丰富的经验</span>
+            <span>实现品牌设计创新的承诺</span>
         </div>
         <div class="process-step">
             <ul class="process-ul">
@@ -200,6 +201,7 @@
             margin-bottom: 0;
             font-family: '微软雅黑', '宋体', serif;
             background: #f7f9fa;
+            margin: 0;
         }
         .process-title>p {
             display: none;
@@ -211,15 +213,19 @@
             font-size: 20px;
             color: #333;
             text-align: center;
-            height: 91px;
+            height: 48px;
             position: relative;
-            padding: 47px 0 0;
         }
         .process-title>span {
             font-size: 14px;
             color: #333333;
             display: inline-block;
             margin-top: 40px;
+            width: 80%;
+            line-height: 2em;
+        }
+        .process-title>span:last-child{
+            margin-top: 0;
         }
         .process-step>ul>li>i{
             width: 100%;
@@ -238,6 +244,13 @@
         }
         .title-under-line{
             display: none;
+        }
+        .process-title{
+            padding: 40px 0;
+        }
+        .process-step{
+            margin-top: 0;
+            padding: 15px;
         }
         .process-step>ul{
             flex-direction: column;

@@ -1,10 +1,10 @@
 <template>
     <div class="server-wrap">
         <div class="server-title">
-            <p>我们的服务</p>
+            <p>服务内容</p>
             <div class="mini-title">
-                <span class="title-zh">我们的服务</span>
-                <div class="title-en">PROCESS</div>
+                <span class="title-zh">服务内容</span>
+                <div class="title-en">SERVICE</div>
             </div>
             <div class="title-under-line">
                 <div>
@@ -18,74 +18,77 @@
                     <ul class="server-ul">
                         <li :key="item.label" class="server-ul-li" v-for="item in serverList">
                             <div class="server-bg">
-                                <i class="iconfont" :class="item.icon"/>
                                 <img :src="item.imgPath" alt="">
+                                <i class="iconfont" :class="item.icon"/>
                                 <div class="server-name">{{item.label}}</div>
+                                <div class="server-desc">
+                                    <span>{{item.desc}}</span>
+                                </div>
                             </div>
                         </li>
                     </ul>
                 </div>
             </div>
         </div>
-        <div class="server-bg-wrap">
-            <div>
-                <div class="features-title">
-                    <p>建站特色</p>
-                    <div class="title-under-line">
-                        <div>
-                            <i class="iconfont icongongnengdingyi"/>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="server-row">
-                <div class="img-left">
-                    <img src="../../assets/pp.svg" width="500px" alt="">
-                </div>
-                <div class="server-right-wrap">
-                    <div class="server-middle">
-                        <ul>
-                            <li :key="item.title" v-for="item in middleSpecifically">
-                                <div>
-                                    <img :src="item.icon" alt="">
-                                    <span class="title">{{item.title}}</span>
-                                </div>
-                                <div>
-                                <span class="desc">
-                                    {{item.desc}}
-                                </span>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="server-right">
-                        <ul>
-                            <li :key="item.title" v-for="item in rightSpecifically">
-                                <div>
-                                    <img :src="item.icon" alt="">
-                                    <span class="title">{{item.title}}</span>
-                                </div>
-                                <div>
-                                <span class="desc">
-                                    {{item.desc}}
-                                </span>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div>
-                <div class="features-title">
-                    <p>品牌建设</p>
-                    <div class="title-under-line">
-                        <div>
-                            <i class="iconfont iconpinpaix"/>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+<!--        <div class="server-bg-wrap">-->
+<!--            <div>-->
+<!--                <div class="features-title">-->
+<!--                    <p>建站特色</p>-->
+<!--                    <div class="title-under-line">-->
+<!--                        <div>-->
+<!--                            <i class="iconfont icongongnengdingyi"/>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div class="server-row">-->
+<!--                <div class="img-left">-->
+<!--                    <img src="../../assets/pp.svg" width="500px" alt="">-->
+<!--                </div>-->
+<!--                <div class="server-right-wrap">-->
+<!--                    <div class="server-middle">-->
+<!--                        <ul>-->
+<!--                            <li :key="item.title" v-for="item in middleSpecifically">-->
+<!--                                <div>-->
+<!--                                    <img :src="item.icon" alt="">-->
+<!--                                    <span class="title">{{item.title}}</span>-->
+<!--                                </div>-->
+<!--                                <div>-->
+<!--                                <span class="desc">-->
+<!--                                    {{item.desc}}-->
+<!--                                </span>-->
+<!--                                </div>-->
+<!--                            </li>-->
+<!--                        </ul>-->
+<!--                    </div>-->
+<!--                    <div class="server-right">-->
+<!--                        <ul>-->
+<!--                            <li :key="item.title" v-for="item in rightSpecifically">-->
+<!--                                <div>-->
+<!--                                    <img :src="item.icon" alt="">-->
+<!--                                    <span class="title">{{item.title}}</span>-->
+<!--                                </div>-->
+<!--                                <div>-->
+<!--                                <span class="desc">-->
+<!--                                    {{item.desc}}-->
+<!--                                </span>-->
+<!--                                </div>-->
+<!--                            </li>-->
+<!--                        </ul>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div>-->
+<!--                <div class="features-title">-->
+<!--                    <p>品牌建设</p>-->
+<!--                    <div class="title-under-line">-->
+<!--                        <div>-->
+<!--                            <i class="iconfont iconpinpaix"/>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
     </div>
 </template>
 
@@ -96,10 +99,10 @@
             return {
                 albumIndex: 0,
                 serverList: [
-                    {icon: 'iconshoujidiannao', imgPath: require('../../assets/server-bg-01.webp'), label: '网站建设', desc: ''},
+                    {icon: 'iconshoujidiannao', imgPath: require('../../assets/server-bg-01.webp'), label: '网站建设', desc: '适应PC、手机、PAD'},
                     {icon: 'iconwechat', imgPath: require('../../assets/server-bg-02.webp'), label: '微信开发', desc: ''},
-                    {icon: 'icontubiao_shejikongjian', imgPath: require('../../assets/server-bg-03.webp'), label: '品牌包装', desc: ''},
-                    {icon: 'icontubiao_shejiku', imgPath: require('../../assets/server-bg-01.webp'), label: 'Logo/VI/画册设计', desc: ''}
+                    {icon: 'icontubiao_shejikongjian', imgPath: require('../../assets/server-bg-03.webp'), label: '软件定制', desc: ''},
+                    {icon: 'icontubiao_shejiku', imgPath: require('../../assets/server-bg-03.webp'), label: '品牌设计', desc: ''}
                 ],
                 middleSpecifically: [
                     {
@@ -164,6 +167,7 @@
         -moz-user-select: none;
         -o-user-select: none;
         user-select: none;
+        background: #f6f6f6;
     }
     .server-bg-wrap{
         background: url("../../assets/index_ab_bg.jpg");
@@ -229,18 +233,28 @@
             margin-top: 36px;
         }
         .server-item-wrap{
+            padding-bottom: 50px;
         }
         .server-item-wrap>.server-ul{
             display: flex;
             justify-content: space-around;
-            width: 80vw;
-            margin: 15px 10vw 0;
+            width: 100vw;
+            margin: 15px 0 0;
         }
         .server-item-wrap>.server-ul>.server-ul-li{
             margin: 0 5px;
+            width: 20%;
         }
-        .server-item-wrap>.server-ul>.server-ul-li>.server-bg{
+        .server-item-wrap>.server-ul>.server-ul-li>.server-bg {
             position: relative;
+            height: 330px;
+            color: #333333;
+            background-color: #fff;
+            box-shadow: unset;
+            transition: all .2s linear;
+        }
+        .server-item-wrap>.server-ul>.server-ul-li>.server-bg:hover {
+            box-shadow: 0 10px 24px 2px rgba(195, 195, 195, 0.5);
         }
         .server-item-wrap>.server-ul>.server-ul-li>.server-bg>i {
             position: absolute;
@@ -248,7 +262,7 @@
             opacity: 0.2;
             color: #ffffff;
             left: calc(50% - 60px);
-            top: calc(50% - 60px);
+            top: calc(24% - 60px);
         }
         .server-item-wrap>.server-ul>.server-ul-li:hover{
             cursor: pointer;
@@ -258,18 +272,18 @@
             display: inline-block;
             width: 100%;
             text-align: center;
-            bottom: calc(50% - 20px);
+            top: 60px;
             left: 0;
             z-index: 1;
             font-size: 30px;
-            color: #fff;
+            color: #ffffff;
         }
         .server-item-wrap>.server-ul>.server-ul-li>.server-bg>img{
             width: 100%;
             height: 170px;
             vertical-align: bottom;
         }
-        .server-item-wrap>.server-ul>.server-ul-li:last-child{
+        .server-item-wrap>.server-ul>.server-ul-li:nth-child(3) img{
             filter: grayscale(1);
         }
         .main-header{
