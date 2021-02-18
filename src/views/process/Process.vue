@@ -141,6 +141,7 @@
             height: 66vh;
         }
         .process-title>p {
+            font-family: '微软雅黑', '宋体', serif;
             margin: 0;
             display: inline-block;
             width: 100%;
@@ -151,10 +152,6 @@
         }
         .mini-title{
             display: none;
-        }
-        .title-under-line{
-            height: 58px;
-            line-height: 58px;
         }
         .title-under-line>div{
             height: 20px;
@@ -191,9 +188,15 @@
 
         .process-title>span{
             display: inline-block;
+            font-family: '微软雅黑', '宋体', serif;
+            font-size: 14px;
             width: 100%;
             color: #a6a6b0;
             margin-top: 36px;
+            font-weight: 300;
+        }
+        .process-title>span:last-child{
+            margin-top: 10px;
         }
     }
     @media screen and (min-width: 0px) and (max-width:720px) {
