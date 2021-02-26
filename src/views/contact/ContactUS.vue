@@ -338,7 +338,7 @@
             padding-bottom: 20px;
         }
         .contact-top {
-            background-image: url("../../assets/contact-us-bg.png");
+            background-image: url("../../assets/contact-us-bgfb.jpg");
             background-repeat: no-repeat;
             background-size: 100% 100%;
             background-position: center center;
@@ -351,14 +351,15 @@
         .contact-top::after {
             content: "";
             width: 330px;
-            height: 604px;
+            height: 640px;
             display: inline-block;
             background: #ffffff;
             position: absolute;
-            top: -130px;
+            top: -150px;
             left: 49%;
             opacity: .42;
             transform: rotate(30deg);
+            filter: blur(20px);
         }
         .content-left i{
             font-size: 24px;
@@ -383,17 +384,18 @@
         .contact-top::after {
             content: "";
             width: 330px;
-            height: 530px;
+            height: 550px;
             display: inline-block;
             background: #ffffff;
             position: absolute;
-            top: -120px;
+            top: -140px;
             left: 49%;
             opacity: .42;
             transform: rotate(30deg);
+            filter: blur(20px);
         }
         .contact-top{
-            background-image: url("../../assets/contact-us-bg.png");
+            background-image: url("../../assets/contact-us-bgfb.jpg");
             background-repeat: no-repeat;
             background-size: 100% 100%;
             background-position: center center;

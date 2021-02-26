@@ -2,13 +2,19 @@ import Vue from "vue";
 import Router from "vue-router";
 import config from './utils/config';
 import lockr from './utils/LockrUtils';
-const Index = resolve => require(["./views/Index"], resolve);
+// const Index = resolve => require(["./views/Index"], resolve);
+const Index = resolve => require(["./views/PreView"], resolve);
 
 
 Vue.use(Router);
 const router = new Router({
   mode: 'history',
   routes: [
+    {
+      path: '/demo',
+      name: 'demo',
+      component: () => import("./views/Demo.vue")
+    },
     {
       path: "/",
       name: "Index",
@@ -33,6 +39,11 @@ const router = new Router({
       path: "/server",
       name: "server",
       component: () => import("./views/server/Server")
+    },
+    {
+      path: "/superiority",
+      name: "superiority",
+      component: () => import("./views/superiority/Superiority")
     },
     {
       path: "/introduction",

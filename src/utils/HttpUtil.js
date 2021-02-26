@@ -90,7 +90,7 @@ const appendHeaders = (headers) => {
 
 HttpUtils.install = function (Vue, options) {
     axios.defaults.baseURL = config.devHost;
-    axios.defaults.timeout = 1000 * 360;
+    axios.defaults.timeout = 1000 * 10;
     axios.defaults.headers['Content-Type'] = 'application/json;charset=UTF-8';
     axios.defaults.withCredentials = true;
 

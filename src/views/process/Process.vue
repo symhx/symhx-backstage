@@ -1,7 +1,7 @@
 <template>
     <div class="process-wrap">
         <div class="process-title">
-            <p>品牌/产品建设流程</p>
+            <p>建设流程</p>
             <div class="mini-title">
                 <span class="title-zh">服务流程</span>
                 <div class="title-en">PROCESS</div>

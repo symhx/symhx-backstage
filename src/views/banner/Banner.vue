@@ -42,14 +42,13 @@
 
 <style scoped>
     .banner-wrap {
-        padding-top: 70px;
+        padding-top: 72px;
         position: relative;
         overflow: hidden;
-        width: 100vw;
+        width: 100%;
         display: flex;
         align-items: center;
         justify-content: center;
-        overflow: hidden;
     }
     .selected_banner{
         position: absolute;

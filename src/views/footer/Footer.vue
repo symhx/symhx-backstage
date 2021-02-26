@@ -92,7 +92,7 @@
         background: url("../../assets/footer-bg.png");
         color: #999;
         font-family: "PingFang SC",serif;
-        padding: 20px 0 0;
+        padding: 60px 0 20px;
         -webkit-user-select: none;
         -moz-user-select: none;
         -o-user-select: none;
@@ -156,7 +156,7 @@
     }
     .record-information{
         position: relative;
-        margin-top: 20px;
+        margin-top: 50px;
     }
     .record-information::before {
         content: "";
@@ -207,7 +207,7 @@
         .pc-footer-content {
             display: block;
             height: 56px;
-            line-height: 56px;
+            line-height: 76px;
             font-size: 16px;
         }
     }
@@ -217,7 +217,7 @@
         .pc-footer-content {
             display: block;
             height: 56px;
-            line-height: 56px;
+            line-height: 76px;
             font-size: 16px;
         }
         .mobile-footer-content{

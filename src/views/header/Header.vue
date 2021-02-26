@@ -69,7 +69,6 @@
 
 <style scoped>
     .header-wrap {
-        background-image: url("../../assets/footer-bg.png");
         width: 100%;
         display: flex;
         justify-content: center;
@@ -78,9 +77,21 @@
         position: fixed;
         top: 0;
         z-index: 99;
+        overflow: hidden;
+    }
+    .header-wrap::before{
+        content: "";
+        filter: blur(100px);
+        position: absolute;
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        z-index: -1;
+        background: #ffffff;
     }
     .header-content {
-        font-family: "PingFang SC",serif;
+        font-family: '微软雅黑', '宋体', serif;
         font-weight: 600;
         width: 80%;
         display: flex;
@@ -97,9 +108,10 @@
     .desc-right>ul>li{
         height: 70px;
         line-height: 70px;
-        color: #a6a6b0;
+        color: #454545;
         cursor: pointer;
         width: 15%;
+        letter-spacing: 2px;
     }
     .desc-right>ul>li:hover{
         color: #c7a480;
