@@ -1,5 +1,5 @@
 <template>
-    <div class="diy-wrap">
+    <div ref="base-wrap" class="diy-wrap" @mousemove="drag" @mouseup="dragend">
         <div>
             <div class="controls-left">
                 <ul>
@@ -8,8 +8,8 @@
                             <span>{{item.label}}</span>
                         </div>
                         <ul class="tab-item">
-                            <li :ref="'ref' + ((index * 100) +idx)" draggable="true" @dragstart="dragstart($event)" @drag="drag($event)" @dragend="dragend($event)" :key="li.assign" v-for="(li,idx) in item.itemList" class="ui-draggable">
-                                <a :id="li.id" href="#">
+                            <li :ref="'ref' + ((index * 100) +idx)" @mousedown="dragstart" :key="li.assign" v-for="(li,idx) in item.itemList" class="ui-draggable">
+                                <a :id="li.id" href="#" @dragstart="noDrag">
                                     <i class="iconfont" :class="li.icon"></i>
                                     <span class="field-name">{{li.label}}</span>
                                 </a>
@@ -19,10 +19,9 @@
                     <li id="backup-li" class="backup-li">{{text}}</li>
                 </ul>
             </div>
-            <div id="middle" class="view-middle">
-                <ul ref="drop-ul-wrap" draggable="true" @dragenter="dragenter($event)" @dragover="dragover($event)" @dragleave="dragleave($event)" @drop="drop($event)">
+            <div ref="view-box" id="middle" class="view-middle">
+                <ul ref="drop-ul-wrap">
                 </ul>
-                <div style="height: 20px;background: #2e73ff"></div>
 <!--                <li ftype="text" class="active" style="display: none;">-->
 <!--                    <a id="sl" class="btn-field field-checked" title="适用于填写简短的文字内容，身份证号、银行卡号、工号等请使用“证件号/卡号”字段。" href="#">-->
 <!--                        <i class="iconfont"></i>-->
@@ -56,7 +55,12 @@
         name: "Demo",
         data() {
             return{
-                position: 0,
+                position: {
+                    clientWidth: 0,
+                    clientHeight: 0,
+                    offsetX: 0,
+                    offsetY: 0
+                },
                 showLi: false,
                 text: '',
                 tabType: [
@@ -197,69 +201,128 @@
                     // {label: '矩阵题', itemList: [{label: '单选', type: 'radio', code: 1}]},
                     // {label: '评分题', itemList: [{label: '单选', type: 'radio', code: 1}]},
                     // {label: '高级题型', itemList: [{label: '单选', type: 'radio', code: 1}]}
-                ]
+                ],
+                moveLi: false,
+                down: false,
+                clientWidth: 0,
+                clientHeight: 0,
+                clientX: 0,
+                clientY: 0
             }
         },
         mounted() {
-            this.position = this.$refs['drop-ul-wrap'].clientTop + this.$refs['drop-ul-wrap'].clientHeight * 2 + 8;
-            console.log(this.position)
+            this.computingPositioning();
         },
         created() {
         },
         methods: {
+            computingPositioning () {
+                this.position.clientWidth = this.$refs['drop-ul-wrap'].clientWidth;
+                this.position.clientHeight = 40;
+                this.position.offsetX = this.$refs['view-box'].offsetLeft;
+                this.position.offsetY = (this.$refs['drop-ul-wrap'].clientHeight-20) + this.$refs['view-box'].offsetTop;
+            },
+            moveType(id,object) {
+                // console.log(object.clientWidth)
+                // console.log(object.clientHeight)
+                let li = document.createElement("li")
+                li.setAttribute("class", "ui-draggable ui-draggable-dragging");
+                li.setAttribute("ref", "ui-draggable");
+                li.setAttribute("ondragstart", "return false");
+                li.style.position = 'absolute';
+                li.style.left= object.clientX +'px';
+                li.style.top= object.clientY +'px';
+                li.style.width = '96px';
+                li.style.height = '72px';
+                let a = document.createElement("a");
+                a.setAttribute("class", "btn-field field-checked btn-field-helper");
+                a.setAttribute("title", "适用于填写简短的文字内容，身份证号、银行卡号、工号等请使用“证件号/卡号”字段。");
+                a.setAttribute("href", "#");
+                let i = document.createElement("i");
+                i.setAttribute("class","iconfont icondanhangwenben")
+                let span = document.createElement("span");
+                span.setAttribute("class","filed-name")
+                let text = document.createTextNode("单行文本");
+                span.appendChild(text);
+                a.appendChild(i);
+                a.appendChild(span);
+                li.appendChild(a);
+                this.$refs['base-wrap'].appendChild(li);
+                this.moveLi = true;
+            },
+            // 禁止拖拽
+            noDrag(e) {
+                e.preventDefault();
+            },
             // 拖拽开始
             dragstart(e) {
-                document.getElementById(e.target.id).parentElement.classList.add('active');
-                // console.log(e.screenX);
-                // console.log(e.screenY);
-                // console.log(e.clientX);
-                // console.log(e.clientY);
-                // console.log(e.pageX);
-                // console.log(e.pageY);
-                // console.log(this.$refs[e.target.id][0]);
-                e.dataTransfer.setData("id", e.target.id);
+                this.clientX = e.offsetLeft;
+                this.clientY = e.offsetTop;
+                console.log(this.clientX)
+                console.log(this.clientY)
+                this.clientWidth = e.target.offsetWidth;
+                this.clientHeight = e.target.offsetHeight;
+                e.target.parentNode.classList.add('active');
+                this.down = true;
             },
-            // 拖拽中
+            // 拖拽
             drag(e) {
-                if (e.clientY > 8 && e.clientY < this.position) {
-                } else {
+                if (this.down) {
+                    if (this.$refs['base-wrap'].lastChild.nodeName === 'DIV' && !this.moveLi) {
+                        this.moveType(e.target.id,e);
+                    } else {
+                        this.$refs['base-wrap'].lastChild.style.left = e.clientX - this.clientWidth / 2 + 'px';
+                        this.$refs['base-wrap'].lastChild.style.top = e.clientY - this.clientHeight / 2 + 'px';
+                    }
+                    if (e.clientY > this.position.offsetY && e.clientY < this.position.offsetY + this.position.clientHeight && e.clientX > this.position.offsetX && e.clientX < this.position.offsetX + this.position.clientWidth) {
+                        if (document.getElementsByClassName("portlet-placeholder").length === 0) {
+                            let li = document.createElement("li");
+                            li.setAttribute("class", "portlet-placeholder field default");
+                            li.style.height = '71px';
+                            li.style.width = '100%';
+                            this.$refs['drop-ul-wrap'].appendChild(li);
+                        }
+                    } else {
+                        let dom = document.getElementsByClassName("portlet-placeholder");
+                        if (dom.length > 0) {
+                            this.$refs['drop-ul-wrap'].removeChild(document.getElementsByClassName("portlet-placeholder")[0]);
+                        }
+                    }
                 }
             },
             // 拖拽结束
             dragend(e) {
-                console.log('拖拽结束')
-                document.getElementById(e.target.id).parentElement.classList.remove('active');
+                this.down = false;
+                let dom = document.getElementsByClassName("portlet-placeholder");
+                if (dom.length > 0) {
+                    this.$refs['drop-ul-wrap'].removeChild(document.getElementsByClassName("portlet-placeholder")[0]);
+                }
+                if (e.clientY > this.position.offsetY && e.clientY < this.position.offsetY + this.position.clientHeight && e.clientX > this.position.offsetX && e.clientX < this.position.offsetX + this.position.clientWidth) {
+                    let element = document.createElement("li");
+                    let text = document.createTextNode("Hi there and greetings!");
+                    element.appendChild(text);
+                    this.$refs['drop-ul-wrap'].appendChild(element);
+                    this.position.offsetY = (this.$refs['drop-ul-wrap'].clientHeight-20) + this.$refs['view-box'].offsetTop;
+                }
+                e.target.parentNode.classList.remove('active');
+                // this.$refs['base-wrap'].removeChild(this.$refs['base-wrap'].lastChild)
+                console.log(this.clientX)
+                console.log(this.clientY)
+                this.$refs['base-wrap'].lastChild.clientX = this.clientX
+                this.$refs['base-wrap'].lastChild.clientY = this.clientY
+                this.moveLi = false;
             },
             // 进入目标框
             dragenter(e) {
-                console.log(this.$refs);
-                console.log(this.$refs['drop-ul-wrap'].clientTop);
-                console.log(this.$refs['drop-ul-wrap'].clientHeight);
-                console.log(e.target.clientTop);
-                // e.preventDefault();
-                // if (document.getElementsByClassName("portlet-placeholder").length === 0) {
-                //     let li = document.createElement("li");
-                //     li.setAttribute("class", "portlet-placeholder field default");
-                //     li.style.height = '71px';
-                //     li.style.width = '100%';
-                //     this.$refs['drop-ul-wrap'].appendChild(li);
-                //     if (this.$refs['drop-ul-wrap'].style.height === ''){
-                //         this.$refs['drop-ul-wrap'].style.height = 91 + "px";
-                //     } else {
-                //         let height = this.$refs['drop-ul-wrap'].style.height.replace("px","")
-                //         height = parseInt(height)
-                //         this.$refs['drop-ul-wrap'].style.height = (height + 71) + "px"
-                //     }
-                // }
+                e.preventDefault();
             },
             // 在目标框移动
             dragover(e) {
                 e.preventDefault();
+                // e.dataTransfer.dropEffect = 'move';
             },
             // 离开放置区
             dragleave(e) {
-                console.log(2)
-                e.preventDefault();
                 if (document.getElementsByClassName("portlet-placeholder").length === 1) {
                     console.log(this.$refs['drop-ul-wrap'].style.height);
                     // if (this.$refs['drop-ul-wrap'].style.height !== "") {
@@ -277,8 +340,6 @@
             },
             // 放置
             drop(e) {
-                console.log(e.dataTransfer.getData("id"));
-                e.preventDefault();
                 if (document.getElementsByClassName("portlet-placeholder").length === 1) {
                     e.preventDefault();
                     this.$refs['drop-ul-wrap'].removeChild(document.getElementsByClassName("portlet-placeholder")[0]);
@@ -301,6 +362,9 @@
         -o-user-select: none;
         user-select: none;
     }
+    ul,li{
+        list-style: none;
+    }
     .diy-wrap>div{
         display: flex;
         width: 1200px;
@@ -312,7 +376,7 @@
         justify-content: space-between;
     }
     .diy-wrap>div>div:nth-child(1){
-        width: 240px;
+        width: 320px;
         padding: 0 0 40px;
         background: #fff;
         box-shadow: 0 0 4px 0 #dfdfdf;
@@ -338,17 +402,30 @@
         display: flex;
         position: relative;
         flex-wrap: wrap;
+        padding: 20px 0;
     }
     .tab-item>li{
         float: left;
         width: 33.33%;
         text-align: center;
         background: #ffffff;
+        position: relative;
+        display: inline-block;
     }
     .tab-item>li>a{
         display: block;
         padding: 10px 5px 12px;
         cursor: pointer;
+        position: relative;
+    }
+    .tab-item>li>a::after{
+        content: "";
+        display: inline-block;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        left: 0;
+        top: 0;
     }
     .tab-item>li>a:hover {
         color: #2e73ff;
@@ -372,10 +449,9 @@
         display: block;
     }
     .view-middle>ul{
-        list-style: none;
         position: relative;
         padding: 0 0 20px;
-        background: #a6a6b0;
+        background: #ffffff;
         display: inline-block;
         width: 100%;
     }
@@ -426,5 +502,25 @@
         padding-top: 5px;
         font-size: 14px;
         font-family: '微软雅黑', '宋体', serif;
+    }
+    .ui-draggable-dragging {
+        text-align: center;
+        z-index: 10;
+        border-radius: 4px;
+        box-shadow: 0 0 4px 0 rgba(5, 20, 51, 0.2);
+        background: #fff;
+    }
+    .ui-draggable-dragging a {
+        display: block;
+        padding: 14px 5px 10px;
+        color: #2e73ff;
+    }
+    .ui-draggable-dragging a i {
+        font-size: 20px;
+    }
+    .ui-draggable-dragging a span {
+        display: block;
+        padding-top: 6px;
+        font-size: 14px;
     }
 </style>
