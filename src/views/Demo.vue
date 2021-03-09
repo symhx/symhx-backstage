@@ -803,14 +803,23 @@
                 localStorage.setItem("child-move-enable", e.target.getAttribute("id"));
                 // console.log(e.target.offsetWidth)
                 // console.log(e.target.offsetHeight)
-                console.log(e.offsetY)
-                console.log(e.target.parentNode)
+                // console.log(this.$refs['view-box'].parentNode.offsetLeft)
+                // console.log(e.target.offsetLeft);
+                // console.log(e.offsetX + e.target.offsetLeft);
+                let offsetX
+                if (e.offsetX < 0) {
+                    offsetX = 0;
+                } else {
+                    offsetX = e.offsetX
+                }
+                console.log(e.target.offsetLeft);
+                console.log(e.target.offsetTop);
                 localStorage.setItem("mouse-click-left-x", e.target.offsetLeft);
                 localStorage.setItem("mouse-click-left-y", e.target.offsetTop);
                 localStorage.setItem("mouse-click-x", e.clientX);
                 localStorage.setItem("mouse-click-y", e.clientY);
-                localStorage.setItem("mouse-click-init-x", 1);
-                localStorage.setItem("mouse-click-init-y", 2);
+                localStorage.setItem("mouse-click-init-x", offsetX + e.target.offsetLeft) // ul中鼠标x坐标;
+                localStorage.setItem("mouse-click-init-y", e.offsetY + e.target.offsetTop) // ul中鼠标y坐标;
             },
             endChild(e) {
                 let curr = this.$refs[localStorage.getItem("child-move-enable")];
@@ -832,8 +841,8 @@
                     if (e.clientX > 0 && e.clientY > 0) {
                         let curr = this.$refs[localStorage.getItem("child-move-enable")];
                         curr.style.position = 'absolute';
-                        curr.style.left = (e.clientX - this.$refs['view-box'].parentNode.offsetLeft - parseInt(localStorage.getItem("mouse-click-left-x"))) + 'px';
-                        curr.style.top = e.clientY - (this.$refs['view-box'].parentNode.offsetTop + this.$refs['formHeader'].offsetHeight + this.$refs['drop-ul-wrap'].offsetTop) - parseInt(localStorage.getItem("mouse-click-left-x")) + 'px';
+                        curr.style.left = (e.clientX - this.$refs['view-box'].parentNode.offsetLeft - parseInt(localStorage.getItem("mouse-click-init-x"))) + 'px';
+                        curr.style.top = e.clientY - (this.$refs['view-box'].parentNode.offsetTop + this.$refs['formHeader'].offsetHeight + this.$refs['drop-ul-wrap'].offsetTop) - parseInt(localStorage.getItem("mouse-click-init-y")) + 'px';
                         curr.style.zIndex = '1000';
                         curr.style.width = '100%';
                         curr.style.opacity = '0.9';
