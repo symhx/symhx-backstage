@@ -64,7 +64,7 @@
                             </div>
                         </div>
                         <div class="form-body">
-                            <div class="no-plug-wrap">
+                            <div v-if="formItem.length===0" class="no-plug-wrap">
                                 <div class="prompt-info">
                                     <div class="left-img">
                                         <img @dragstart="noDrag" src="../assets/nomessagen.png" alt="">
@@ -77,10 +77,14 @@
                                 </div>
                             </div>
                             <ul ref="drop-ul-wrap" @mousemove="moveChild" @mouseleave="outChild" @mouseup="endChild">
-                                <li id="1" ref="1" @mousedown="startChild">Hi there and greetings one</li>
-                                <li id="2" ref="2" @mousedown="startChild">Hi there and greetings two</li>
-                                <li id="3" ref="3" @mousedown="startChild">Hi there and greetings three</li>
-                                <li id="4" ref="4" @mousedown="startChild">Hi there and greetings four</li>
+                                <template v-for="(item,index) in formItem">
+                                    <li v-if="item!==''" :key="'item'+index" :id="getIndex(item)" :ref="getIndex(item)" @mousedown="startChild(index,$event)">
+                                        {{getIndex(item) + 1}}-{{item}}
+                                    </li>
+                                    <li :key="item" v-else class="sortable-placeholder">
+
+                                    </li>
+                                </template>
                             </ul>
                         </div>
                     </div>
@@ -579,6 +583,12 @@
                         ]
                     }
                 ],
+                formItem: [
+                    'one',
+                    'two',
+                    'three',
+                    'four'
+                ],
                 moveLi: false,
                 down: false,
                 clientWidth: 0,
@@ -619,7 +629,7 @@
                 form: {
                     header: {
                         formName: '表单名称',
-                        formDesc: '123'
+                        formDesc: '表单描述'
                     }
                 }
             }
@@ -799,59 +809,79 @@
                 console.log(e);
                 console.log(e.target);
             },
-            startChild(e) {
+            startChild(index, e) {
+                localStorage.setItem("child-li-index", index);
                 localStorage.setItem("child-move-enable", e.target.getAttribute("id"));
-                // console.log(e.target.offsetWidth)
-                // console.log(e.target.offsetHeight)
-                // console.log(this.$refs['view-box'].parentNode.offsetLeft)
-                // console.log(e.target.offsetLeft);
-                // console.log(e.offsetX + e.target.offsetLeft);
                 let offsetX
                 if (e.offsetX < 0) {
                     offsetX = 0;
                 } else {
                     offsetX = e.offsetX
                 }
-                console.log(e.target.offsetLeft);
-                console.log(e.target.offsetTop);
-                localStorage.setItem("mouse-click-left-x", e.target.offsetLeft);
-                localStorage.setItem("mouse-click-left-y", e.target.offsetTop);
-                localStorage.setItem("mouse-click-x", e.clientX);
-                localStorage.setItem("mouse-click-y", e.clientY);
-                localStorage.setItem("mouse-click-init-x", offsetX + e.target.offsetLeft) // ul中鼠标x坐标;
-                localStorage.setItem("mouse-click-init-y", e.offsetY + e.target.offsetTop) // ul中鼠标y坐标;
+                localStorage.setItem("mouse-click-left-x", e.target.offsetLeft); // 距左边像素
+                localStorage.setItem("mouse-click-left-y", e.target.offsetTop); // 距上边像素
+                localStorage.setItem("mouse-click-x", e.clientX); // 鼠标整个页面的x坐标
+                localStorage.setItem("mouse-click-y", e.clientY); // 鼠标整个页面的y坐标
+                localStorage.setItem("mouse-click-init-x", (offsetX + e.target.offsetLeft)) // ul中鼠标x坐标;
+                localStorage.setItem("mouse-click-init-y", (e.offsetY + e.target.offsetTop)) // ul中鼠标y坐标;
             },
             endChild(e) {
                 let curr = this.$refs[localStorage.getItem("child-move-enable")];
-                curr.style.position = 'relative';
-                curr.style.left = 0 + 'px';
-                curr.style.top = 0 + 'px';
-                curr.style.zIndex = '99';
-                curr.style.width = 'auto';
-                curr.style.opacity = '1';
-                curr.style.border = '1px solid transparent';
+                curr[0].style.position = 'relative';
+                curr[0].style.left = 0 + 'px';
+                curr[0].style.top = 0 + 'px';
+                curr[0].style.zIndex = '99';
+                curr[0].style.width = 'auto';
+                curr[0].style.opacity = '1';
+                curr[0].style.border = '1px solid transparent';
                 localStorage.removeItem("child-move-enable");
                 localStorage.removeItem("mouse-click-x")
                 localStorage.removeItem("mouse-click-y")
                 localStorage.removeItem("mouse-click-init-x")
                 localStorage.removeItem("mouse-click-init-y")
+                //删除插入盒子标识
+                if (null !== localStorage.getItem("temp-flag")) {
+                    let index = parseInt(localStorage.getItem("temp-flag"));
+                    this.formItem.splice(index, 1);
+                    localStorage.removeItem("temp-flag");
+                }
             },
             moveChild(e) {
                 if (null != localStorage.getItem("child-move-enable")) {
                     if (e.clientX > 0 && e.clientY > 0) {
+                        let index = parseInt(localStorage.getItem("child-li-index"));
+                        // 检查是否已插入盒子标识
+                        let flag = localStorage.getItem("temp-flag");
+                        if (flag === null) {
+                            localStorage.setItem("temp-flag", index + 1);
+                            this.formItem.splice(index + 1, 0, '');
+                        }
+                        // 计算下一位元素坐标
+                        let nextNode = this.$refs[(index + 1) + ''][0];
+                        let moveY = nextNode.offsetTop + (nextNode.clientHeight + nextNode.clientTop * 2) / 2;
+                        console.log(moveY);
+                        console.log(e.offsetY);
+                        // 计算上一位元素坐标
+
                         let curr = this.$refs[localStorage.getItem("child-move-enable")];
-                        curr.style.position = 'absolute';
-                        curr.style.left = (e.clientX - this.$refs['view-box'].parentNode.offsetLeft - parseInt(localStorage.getItem("mouse-click-init-x"))) + 'px';
-                        curr.style.top = e.clientY - (this.$refs['view-box'].parentNode.offsetTop + this.$refs['formHeader'].offsetHeight + this.$refs['drop-ul-wrap'].offsetTop) - parseInt(localStorage.getItem("mouse-click-init-y")) + 'px';
-                        curr.style.zIndex = '1000';
-                        curr.style.width = '100%';
-                        curr.style.opacity = '0.9';
-                        curr.style.border = '2px solid #2672ff';
+                        curr[0].style.position='absolute'
+                        curr[0].style.position = 'absolute';
+                        // console.log(e.clientY - (this.$refs['view-box'].parentNode.offsetTop + this.$refs['formHeader'].offsetHeight + this.$refs['drop-ul-wrap'].offsetTop))
+                        curr[0].style.zIndex = '1000';
+                        curr[0].style.width = 'calc(100% - 24px)';
+                        curr[0].style.opacity = '0.9';
+                        curr[0].style.border = '2px solid #2672ff';
+                        let d = parseInt(localStorage.getItem("mouse-click-init-y")) - parseInt(localStorage.getItem("mouse-click-left-y"));
+                        curr[0].style.left = (e.clientX - this.$refs['view-box'].parentNode.offsetLeft - parseInt(localStorage.getItem("mouse-click-init-x"))) - 2 + 'px';
+                        curr[0].style.top = e.clientY - (this.$refs['view-box'].parentNode.offsetTop + this.$refs['formHeader'].offsetHeight + this.$refs['drop-ul-wrap'].offsetTop) - d - 13 + 'px';
                     }
                 }
             },
             outChild(e) {
                 localStorage.removeItem("child-move-enable");
+            },
+            getIndex(item) {
+                return JSON.parse(JSON.stringify(this.formItem)).filter(item => item !== '').indexOf(item);
             }
         },
         components: {
@@ -887,6 +917,7 @@
         float: left;
         margin-right: 8px;
         overflow: auto;
+        flex-shrink:0
     }
     .diy-wrap>.form-body-wrap>div:nth-child(2){
         position: relative;
@@ -983,7 +1014,7 @@
         clear: both;
     }
     .form-body>ul>li {
-        margin: 12px;
+        margin: 12px 12px 0;
         border-radius: 4px;
         background-color: #fff;
         box-shadow: 0 2px 4px 0 rgba(0,0,0,0.1);
@@ -1220,5 +1251,14 @@
     }
     .controls-left::-webkit-scrollbar{
         display: none;
+    }
+
+    .sortable-placeholder {
+        border-radius: unset!important;
+        display: block;
+        background-color: #2672ff !important;
+        visibility: visible !important;
+        height: 8px !important;
+        width: calc(100% - 24px) !important;
     }
 </style>
