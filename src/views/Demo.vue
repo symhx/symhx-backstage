@@ -77,11 +77,11 @@
                                 </div>
                             </div>
                             <ul ref="drop-ul-wrap" @mousemove="moveChild" @mouseleave="outChild" @mouseup="endChild">
-                                <template v-for="(item,index) in formItem">
+                                <template v-for="(item,index) in formItem" >
                                     <li v-if="item!==''" :key="'item'+index" :id="getIndex(item)" :ref="getIndex(item)" @mousedown="startChild(index,$event)">
                                         {{getIndex(item) + 1}}-{{item}}
                                     </li>
-                                    <li :key="item" v-else class="sortable-placeholder">
+                                    <li ref="temp-li" :key="item" v-else class="sortable-placeholder">
 
                                     </li>
                                 </template>
@@ -584,10 +584,10 @@
                     }
                 ],
                 formItem: [
-                    'one',
-                    'two',
-                    'three',
-                    'four'
+                    '<li>one</li>',
+                    '<li>two</li>',
+                    '<li>three</li>',
+                    '<li>four</li>'
                 ],
                 moveLi: false,
                 down: false,
@@ -740,8 +740,8 @@
             },
             // 拖拽结束
             dragend(e) {
-                console.log(sessionStorage.getItem("id"))
-                console.log(sessionStorage.getItem("title"))
+                // console.log(sessionStorage.getItem("id"))
+                // console.log(sessionStorage.getItem("title"))
                 if (this.$refs['base-wrap'].lastChild.localName !== 'li') {
                     return;
                 }
@@ -845,26 +845,63 @@
                     this.formItem.splice(index, 1);
                     localStorage.removeItem("temp-flag");
                 }
+                localStorage.removeItem("move_flag");
             },
-            moveChild(e) {
+            moveChild: function (e) {
                 if (null != localStorage.getItem("child-move-enable")) {
                     if (e.clientX > 0 && e.clientY > 0) {
                         let index = parseInt(localStorage.getItem("child-li-index"));
                         // 检查是否已插入盒子标识
                         let flag = localStorage.getItem("temp-flag");
                         if (flag === null) {
-                            localStorage.setItem("temp-flag", index + 1);
-                            this.formItem.splice(index + 1, 0, '');
+                            // localStorage.setItem("temp-flag", index + 1);
+                            // this.formItem.splice(index + 1, 0, '');
+                            let element = document.createElement("li");
+                            element.setAttribute("class", "sortable-placeholder");
+                            // let parent = e.target.parentNode;
+                            console.log(this.$refs['drop-ul-wrap'])
+                            // .insertAfter(element,e.target);
+                            // console.log(e.target)
+                            // e.parentNode.insertBefore(element, e.target);
                         }
+                        // console.log(this.$refs[index + ''][0].previousElementSibling);
+                        // console.log(this.$refs[index + ''][0].nextElementSibling);
                         // 计算下一位元素坐标
-                        let nextNode = this.$refs[(index + 1) + ''][0];
-                        let moveY = nextNode.offsetTop + (nextNode.clientHeight + nextNode.clientTop * 2) / 2;
-                        console.log(moveY);
-                        console.log(e.offsetY);
+                        if (this.$refs['temp-li'] !== undefined && this.$refs['temp-li'].length > 0) {
+                            // console.log(e.target.getAttribute("id")) // 移动标签ID
+                            // console.log(this.$refs['temp-li'][0].previousElementSibling.id); //占位标签前一个元素ID
+                            // console.log(this.$refs['temp-li'][0].nextElementSibling.id); //占位标签后一个元素ID
+                            let nextNode = this.$refs['temp-li'][0].nextElementSibling;
+                            let moveY = e.offsetY + e.target.offsetTop;
+                            let nextY = nextNode.offsetTop + (nextNode.clientHeight + nextNode.clientTop * 2) / 2;
+                            // if (moveY > nextY) {
+                            //     nextNode.parentNode.insertBefore(e.target,nextNode.nextSibling);
+                            // }
+                        }
+                        // console.log(this.$refs['temp-li'].previousElementSibling);
+                        // console.log(this.$refs['temp-li'].nextElementSibling);
+                        // let nextNode = this.$refs[(index + 1) + ''][0];
+                        // let moveY = nextNode.offsetTop + (nextNode.clientHeight + nextNode.clientTop * 2) / 2;
+                        // if (e.offsetY + e.target.offsetTop > moveY) {
+                        //     //放置标识下移
+                        //     if (null == localStorage.getItem("move_flag")) {
+                        //         this.formItem.splice(index + 1, 1);
+                        //         localStorage.setItem("move_flag", 1);
+                        //         localStorage.setItem("temp-flag", index + 2);
+                        //         this.formItem.splice(index + 2, 0, '');
+                        //     }
+                        // } else {
+                        //     if (null != localStorage.getItem("move_flag")) {
+                        //         if (e.offsetY + e.target.offsetTop < moveY) {
+                        //             this.formItem.splice(index + 2, 1);
+                        //             // localStorage.removeItem("temp-flag");
+                        //         }
+                        //     }
+                        // }
                         // 计算上一位元素坐标
 
                         let curr = this.$refs[localStorage.getItem("child-move-enable")];
-                        curr[0].style.position='absolute'
+                        curr[0].style.position = 'absolute'
                         curr[0].style.position = 'absolute';
                         // console.log(e.clientY - (this.$refs['view-box'].parentNode.offsetTop + this.$refs['formHeader'].offsetHeight + this.$refs['drop-ul-wrap'].offsetTop))
                         curr[0].style.zIndex = '1000';
