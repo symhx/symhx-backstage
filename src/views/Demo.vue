@@ -81,9 +81,6 @@
                                     <li v-if="item!==''" :key="'item'+index" :id="getIndex(item)" :ref="getIndex(item)" @mousedown="startChild(index,$event)">
                                         {{getIndex(item) + 1}}-{{item}}
                                     </li>
-                                    <li ref="temp-li" :key="item" v-else class="sortable-placeholder">
-
-                                    </li>
                                 </template>
                             </ul>
                         </div>
@@ -740,8 +737,6 @@
             },
             // 拖拽结束
             dragend(e) {
-                // console.log(sessionStorage.getItem("id"))
-                // console.log(sessionStorage.getItem("title"))
                 if (this.$refs['base-wrap'].lastChild.localName !== 'li') {
                     return;
                 }
@@ -809,116 +804,206 @@
                 console.log(e);
                 console.log(e.target);
             },
+            // 点击按下元素
             startChild(index, e) {
-                localStorage.setItem("child-li-index", index);
-                localStorage.setItem("child-move-enable", e.target.getAttribute("id"));
-                let offsetX
-                if (e.offsetX < 0) {
-                    offsetX = 0;
-                } else {
-                    offsetX = e.offsetX
-                }
-                localStorage.setItem("mouse-click-left-x", e.target.offsetLeft); // 距左边像素
-                localStorage.setItem("mouse-click-left-y", e.target.offsetTop); // 距上边像素
+                // 存储当前节点索引
+                localStorage.setItem("CURRENT_NODE_INDEX", index);
+                // 存储当前节点ID
+                localStorage.setItem("CURRENT_NODE_ID", e.target.getAttribute("id"));
+                localStorage.setItem("PARENT_NODE_IN_X", e.target.offsetLeft); // 父元素中元素X坐标
+                localStorage.setItem("PARENT_NODE_IN_Y", e.target.offsetTop);  // 父元素中元素Y坐标
                 localStorage.setItem("mouse-click-x", e.clientX); // 鼠标整个页面的x坐标
                 localStorage.setItem("mouse-click-y", e.clientY); // 鼠标整个页面的y坐标
-                localStorage.setItem("mouse-click-init-x", (offsetX + e.target.offsetLeft)) // ul中鼠标x坐标;
-                localStorage.setItem("mouse-click-init-y", (e.offsetY + e.target.offsetTop)) // ul中鼠标y坐标;
+                localStorage.setItem("PARENT_NODE_MOUSE_IN_X", (e.offsetX + e.target.offsetLeft) + "")  // 父元素中鼠标X;
+                localStorage.setItem("PARENT_NODE_MOUSE_IN_Y", (e.offsetY + e.target.offsetTop) + "") // 父元素中鼠标Y;
             },
-            endChild(e) {
-                let curr = this.$refs[localStorage.getItem("child-move-enable")];
-                curr[0].style.position = 'relative';
-                curr[0].style.left = 0 + 'px';
-                curr[0].style.top = 0 + 'px';
-                curr[0].style.zIndex = '99';
-                curr[0].style.width = 'auto';
-                curr[0].style.opacity = '1';
-                curr[0].style.border = '1px solid transparent';
-                localStorage.removeItem("child-move-enable");
+            // 点击按上元素
+            endChild: function (e) {
+                //删除插入盒子标识
+                if (null !== localStorage.getItem("PLACEHOLDER_CONTAINER")) {
+                    let index = parseInt(localStorage.getItem("PLACEHOLDER_CONTAINER"));
+                    let parent = e.target.parentNode;
+                    let tempNode = parent.childNodes[index];
+                    let offsetX = tempNode.offsetLeft
+                    // (-84 + 12)
+                    let offsetY = tempNode.offsetTop - 84
+                    let currLiX = localStorage.getItem("CURRENT_NODE_IN_PARENT_LEFT");
+                    let currLiY = localStorage.getItem("CURRENT_NODE_IN_PARENT_TOP") - 12;
+                    let dx = parseInt(currLiX) - offsetX;
+                    let dy = parseInt(currLiY) - offsetY;
+                    let dw = dx / 10;
+                    let dh = dy / 10;
+                    let time = 0;
+                    let timer = setInterval(() => {
+                        if (time === 10) {
+                            clearInterval(timer);
+                            let curr = this.$refs[localStorage.getItem("CURRENT_NODE_ID")];
+                            if (null !== curr && undefined !== curr) {
+                                curr[0].style.position = 'relative';
+                                curr[0].style.zIndex = '99';
+                                curr[0].style.width = '100%';
+                                curr[0].style.opacity = '1';
+                                curr[0].style.border = '1px solid transparent';
+                            }
+                            localStorage.removeItem("CURRENT_NODE_ID");
+                            this.$refs['drop-ul-wrap'].removeChild(this.$refs['drop-ul-wrap'].childNodes[index]);
+                            localStorage.removeItem("PLACEHOLDER_CONTAINER");
+                        } else {
+                            if (e.target.style.left !== undefined && e.target.style.left !== null) {
+                                let left = e.target.style.left.split("px")[0];
+                                let top = e.target.style.top.split("px")[0];
+                                if ((parseFloat(left).toFixed(1) * 10)/10 === 0 && time === 0) {
+                                    offsetX = (parseFloat(currLiX).toFixed(1) * 10 - parseFloat(dw).toFixed(1) * 10) / 10;
+                                } else {
+                                    offsetX = (parseFloat(left).toFixed(1) * 10 - parseFloat(dw).toFixed(1) * 10) / 10;
+                                }
+                                if ((parseFloat(top).toFixed(1) * 10)/10 === 0 && time === 0) {
+                                    offsetY = (parseFloat(currLiY).toFixed(1) * 10 - parseFloat(dh).toFixed(1) * 10) / 10;
+                                } else {
+                                    offsetY = (parseFloat(top).toFixed(1) * 10 - parseFloat(dh).toFixed(1) * 10) / 10;
+                                }
+                            }
+                            e.target.style.left = offsetX + 'px';
+                            // e.target.style.top = offsetY + 'px';
+                            time += 1;
+                        }
+                    }, 50);
+                }
+                localStorage.removeItem("PARENT_NODE_IN_X");
+                localStorage.removeItem("PARENT_NODE_IN_Y");
                 localStorage.removeItem("mouse-click-x")
                 localStorage.removeItem("mouse-click-y")
                 localStorage.removeItem("mouse-click-init-x")
                 localStorage.removeItem("mouse-click-init-y")
-                //删除插入盒子标识
-                if (null !== localStorage.getItem("temp-flag")) {
-                    let index = parseInt(localStorage.getItem("temp-flag"));
-                    this.formItem.splice(index, 1);
-                    localStorage.removeItem("temp-flag");
-                }
                 localStorage.removeItem("move_flag");
+                localStorage.removeItem("CURRENT_NODE_IN_PARENT_TOP");
+                localStorage.removeItem("CURRENT_NODE_IN_PARENT_LEFT");
+                // 移除当前节点索引
+                localStorage.removeItem("CURRENT_NODE_INDEX");
             },
+            // 在节点前写入
+            insertBefore(parentNode, targetNode) {
+                let element = document.createElement("li");
+                element.setAttribute("class", "sortable-placeholder");
+                parentNode.insertBefore(element,targetNode)
+            },
+            // 在节点后写入
+            insertAfter (parentNode, targetNode) {
+                let element = document.createElement("li");
+                element.setAttribute("class", "sortable-placeholder");
+                if (parentNode.lastChild == targetNode) {
+                    // 如果最后的节点是目标元素，则直接添加。因为默认是最后
+                    parentNode.appendChild(element);
+                } else {
+                    // 如果不是，则插入在目标元素的下一个兄弟节点 的前面。也就是目标元素的后面
+                    parentNode.insertBefore(element, targetNode.nextSibling);
+                }
+            },
+            // 移动元素
             moveChild: function (e) {
-                if (null != localStorage.getItem("child-move-enable")) {
-                    if (e.clientX > 0 && e.clientY > 0) {
-                        let index = parseInt(localStorage.getItem("child-li-index"));
-                        // 检查是否已插入盒子标识
-                        let flag = localStorage.getItem("temp-flag");
-                        if (flag === null) {
-                            // localStorage.setItem("temp-flag", index + 1);
-                            // this.formItem.splice(index + 1, 0, '');
-                            let element = document.createElement("li");
-                            element.setAttribute("class", "sortable-placeholder");
-                            // let parent = e.target.parentNode;
-                            console.log(this.$refs['drop-ul-wrap'])
-                            // .insertAfter(element,e.target);
-                            // console.log(e.target)
-                            // e.parentNode.insertBefore(element, e.target);
-                        }
-                        // console.log(this.$refs[index + ''][0].previousElementSibling);
-                        // console.log(this.$refs[index + ''][0].nextElementSibling);
-                        // 计算下一位元素坐标
-                        if (this.$refs['temp-li'] !== undefined && this.$refs['temp-li'].length > 0) {
-                            // console.log(e.target.getAttribute("id")) // 移动标签ID
-                            // console.log(this.$refs['temp-li'][0].previousElementSibling.id); //占位标签前一个元素ID
-                            // console.log(this.$refs['temp-li'][0].nextElementSibling.id); //占位标签后一个元素ID
-                            let nextNode = this.$refs['temp-li'][0].nextElementSibling;
-                            let moveY = e.offsetY + e.target.offsetTop;
-                            let nextY = nextNode.offsetTop + (nextNode.clientHeight + nextNode.clientTop * 2) / 2;
-                            // if (moveY > nextY) {
-                            //     nextNode.parentNode.insertBefore(e.target,nextNode.nextSibling);
-                            // }
-                        }
-                        // console.log(this.$refs['temp-li'].previousElementSibling);
-                        // console.log(this.$refs['temp-li'].nextElementSibling);
-                        // let nextNode = this.$refs[(index + 1) + ''][0];
-                        // let moveY = nextNode.offsetTop + (nextNode.clientHeight + nextNode.clientTop * 2) / 2;
-                        // if (e.offsetY + e.target.offsetTop > moveY) {
-                        //     //放置标识下移
-                        //     if (null == localStorage.getItem("move_flag")) {
-                        //         this.formItem.splice(index + 1, 1);
-                        //         localStorage.setItem("move_flag", 1);
-                        //         localStorage.setItem("temp-flag", index + 2);
-                        //         this.formItem.splice(index + 2, 0, '');
-                        //     }
-                        // } else {
-                        //     if (null != localStorage.getItem("move_flag")) {
-                        //         if (e.offsetY + e.target.offsetTop < moveY) {
-                        //             this.formItem.splice(index + 2, 1);
-                        //             // localStorage.removeItem("temp-flag");
-                        //         }
-                        //     }
-                        // }
-                        // 计算上一位元素坐标
+                //屏幕鼠标X坐标
+                let mouseClientX = e.clientX;
+                //屏幕鼠标Y坐标
+                let mouseClientY = e.clientY;
+                //父标签
+                let parentNode = e.target.parentNode;
+                // 相对于父元素的top浮动
+                let offsetTop = e.target.offsetTop;
+                // 相对于父元素的left浮动
+                let offsetLeft = e.target.offsetLeft;
+                // 鼠标在元素中的X坐标
+                let offsetX = e.offsetX
+                // 鼠标再元素中的Y坐标
+                let offsetY = e.offsetY
+                // 当前节点再父元素中的坐标
+                localStorage.setItem("CURRENT_NODE_IN_PARENT_TOP", offsetTop)
+                localStorage.setItem("CURRENT_NODE_IN_PARENT_LEFT", offsetLeft)
 
-                        let curr = this.$refs[localStorage.getItem("child-move-enable")];
-                        curr[0].style.position = 'absolute'
-                        curr[0].style.position = 'absolute';
-                        // console.log(e.clientY - (this.$refs['view-box'].parentNode.offsetTop + this.$refs['formHeader'].offsetHeight + this.$refs['drop-ul-wrap'].offsetTop))
-                        curr[0].style.zIndex = '1000';
-                        curr[0].style.width = 'calc(100% - 24px)';
-                        curr[0].style.opacity = '0.9';
-                        curr[0].style.border = '2px solid #2672ff';
-                        let d = parseInt(localStorage.getItem("mouse-click-init-y")) - parseInt(localStorage.getItem("mouse-click-left-y"));
-                        curr[0].style.left = (e.clientX - this.$refs['view-box'].parentNode.offsetLeft - parseInt(localStorage.getItem("mouse-click-init-x"))) - 2 + 'px';
-                        curr[0].style.top = e.clientY - (this.$refs['view-box'].parentNode.offsetTop + this.$refs['formHeader'].offsetHeight + this.$refs['drop-ul-wrap'].offsetTop) - d - 13 + 'px';
+                let currentNodeID = localStorage.getItem("CURRENT_NODE_ID");
+                if (this.validField(currentNodeID)) {
+                    if (mouseClientX > 0 && mouseClientY > 0) {
+                        let currentNode = this.$refs[currentNodeID];
+                        currentNode[0].style.position = 'absolute';
+                        currentNode[0].style.zIndex = '1000';
+                        currentNode[0].style.width = '100%';
+                        currentNode[0].style.opacity = '0.9';
+                        currentNode[0].style.border = '2px solid #2672ff';
+                        // 设置当前节点坐标
+                        // left = mouseClientX - 左侧控件宽度 - 鼠标在li的X坐标
+                        // top = mouseClientY -顶部坐标 - 鼠标在li的Y坐标
+                        let diffX = parseInt(localStorage.getItem("PARENT_NODE_MOUSE_IN_Y")) - parseInt(localStorage.getItem("PARENT_NODE_IN_Y"));
+                        let diffY = parseInt(localStorage.getItem("PARENT_NODE_MOUSE_IN_Y")) - parseInt(localStorage.getItem("PARENT_NODE_IN_Y"));
+                        // 在ul中的坐标
+                        console.log()
+                        currentNode[0].style.left = (mouseClientX - (this.$refs['view-box'].parentNode.offsetLeft + this.$refs['view-box'].clientLeft) - parseInt(localStorage.getItem("mouse-click-init-x"))) + 'px';
+                        currentNode[0].style.top = mouseClientY - (this.$refs['view-box'].parentNode.offsetTop + this.$refs['formHeader'].offsetHeight + this.$refs['drop-ul-wrap'].offsetTop) - d - 13 + 'px';
+
+                        let currNodeIndex = parseInt(localStorage.getItem("CURRENT_NODE_INDEX"));
+                        // 占位容器(存索引)
+                        let placeholderContainer = localStorage.getItem("PLACEHOLDER_CONTAINER");
+                        // 鼠标在父容器中Y坐标
+                        let mouseInParentY = offsetX + offsetTop;
+                        // 是否已存在占位容器
+                        if (!this.validField(placeholderContainer)) {
+                            this.insertAfter(parentNode, e.target);
+                            localStorage.setItem("PLACEHOLDER_CONTAINER", (currNodeIndex + 1) + '');
+                        } else {
+                            // 占位容器前兄弟节点
+                            let preNode = parentNode.childNodes[placeholderContainer].previousElementSibling;
+                            // 节点中心Y坐标距父元素高度
+                            let preCenterHeightY = preNode.offsetTop + (preNode.clientHeight + preNode.clientTop * 2) / 2;
+                            // 与移动元素相同
+                            if (preNode === e.target) {
+                                preNode = preNode.previousElementSibling;
+                                if (this.validField(preNode)) {
+                                    if (mouseInParentY < preCenterHeightY) {
+                                        // 移除占位容器
+                                        parentNode.removeChild(parentNode.childNodes[placeholderContainer])
+                                        // 新增占位容器
+                                        this.insertBefore(parentNode, preNode);
+                                        localStorage.setItem("PLACEHOLDER_CONTAINER", (parseInt(placeholderContainer) - 2) + '');
+                                    }
+                                }
+                            } else {
+                                if (this.validField(preNode)) {
+                                    if (mouseInParentY < preCenterHeightY) {
+                                        // 移除标识
+                                        parentNode.removeChild(parentNode.childNodes[placeholderContainer])
+                                        // 新增标识
+                                        this.insertBefore(parentNode, preNode);
+                                        localStorage.setItem("PLACEHOLDER_CONTAINER", (parseInt(placeholderContainer) - 1) + '');
+                                    }
+                                }
+                            }
+
+                            // 占位容器后兄弟节点
+                            let nextNode = parentNode.childNodes[placeholderContainer].nextElementSibling;
+                            let nextCenterHeightY = nextNode.offsetTop + (nextNode.clientHeight + nextNode.clientTop * 2) / 2;
+                            if (this.validField(nextNode)) {
+                                if (mouseInParentY > nextCenterHeightY) {
+                                    // 移除标识
+                                    parentNode.removeChild(parentNode.childNodes[placeholderContainer])
+                                    // 新增标识
+                                    this.insertAfter(parentNode, nextNode);
+                                    localStorage.setItem("PLACEHOLDER_CONTAINER", (parseInt(placeholderContainer) + 1) + '');
+                                }
+                            }
+                        }
                     }
                 }
             },
             outChild(e) {
-                localStorage.removeItem("child-move-enable");
+                // localStorage.removeItem("CURRENT_NODE_ID");
             },
             getIndex(item) {
                 return JSON.parse(JSON.stringify(this.formItem)).filter(item => item !== '').indexOf(item);
+            },
+            validField(field) {
+                if (null !== field && undefined !== field && '' !== field) {
+                    return true;
+                } else {
+                    return false;
+                }
             }
         },
         components: {
@@ -1043,7 +1128,7 @@
         display: inline-block;
         width: 100%;
         background: #f3f5f6;
-        position: relative;
+        height: 100vh;
     }
     .view-middle>.form>.form-body>ul::after{
         display: table;
@@ -1051,7 +1136,7 @@
         clear: both;
     }
     .form-body>ul>li {
-        margin: 12px 12px 0;
+        margin-top: 12px;
         border-radius: 4px;
         background-color: #fff;
         box-shadow: 0 2px 4px 0 rgba(0,0,0,0.1);
@@ -1063,9 +1148,9 @@
         border: 1px solid transparent;
         position: relative;
     }
-    .form-body>ul>li:hover{
+    .form-body>ul>li:not(.sortable-placeholder):hover{
         cursor: pointer;
-        border: 1px dashed #aaa;
+        border: 1px dashed #aaa!important;
     }
     .field{
         position: relative;
@@ -1191,6 +1276,7 @@
     }
     /*-------------right----------------*/
     .right-property-wrap{
+        margin-left: 12px;
         width: 400px;
         box-sizing: border-box;
         background: #fff;
@@ -1296,6 +1382,5 @@
         background-color: #2672ff !important;
         visibility: visible !important;
         height: 8px !important;
-        width: calc(100% - 24px) !important;
     }
 </style>
