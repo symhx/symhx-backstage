@@ -67,7 +67,7 @@
                             <div v-if="formItem.length===0" class="no-plug-wrap">
                                 <div class="prompt-info">
                                     <div class="left-img">
-                                        <img @dragstart="noDrag" src="../assets/nomessagen.png" alt="">
+<!--                                        <img @dragstart="noDrag" src="../assets/nomessagen.png" alt="">-->
                                     </div>
                                     <div class="right-text">
                                         <div class="paragraph">当前表单暂无内容，你可以</div>
@@ -78,8 +78,10 @@
                             </div>
                             <ul ref="drop-ul-wrap" @mousemove="moveChild" @mouseleave="outChild" @mouseup="endChild">
                                 <template v-for="(item,index) in formItem" >
-                                    <li v-if="item!==''" :key="'item'+index" :id="getIndex(item)" :ref="getIndex(item)" @mousedown="startChild(index,$event)">
-                                        {{getIndex(item) + 1}}-{{item}}
+<!--                                    <li :key="'item'+index" :id="item.id" :ref="item.id" @mousedown="startChild(index,$event)">-->
+<!--                                        <div v-html="item.nodeHtml"></div>-->
+<!--                                    </li>-->
+                                    <li :key="'item'+index" :id="item.id" :ref="item.id" @mousedown="startChild(index,$event)" v-html="item.nodeHtml">
                                     </li>
                                 </template>
                             </ul>
@@ -96,7 +98,7 @@
             <div id="right" class="right-property-wrap">
                 <div class="notice" style="background: #fff;;line-height: 22px;" id="noFieldSelected">
                     <div style="margin: 64px 0 16px ">
-                        <img src="../assets/nomessagen.png" @dragstart="noDrag">
+<!--                        <img src="../assets/nomessagen.png" @dragstart="noDrag">-->
                     </div>
                     <div>没有选择字段</div>
                     <p>请在右侧表单选择字段然后在此处编辑属性</p>
@@ -581,10 +583,10 @@
                     }
                 ],
                 formItem: [
-                    '<li>one</li>',
-                    '<li>two</li>',
-                    '<li>three</li>',
-                    '<li>four</li>'
+                    {id: '1',nodeHtml: '<div>one</div>'},
+                    {id: '2',nodeHtml: '<div>two</div>'},
+                    {id: '3',nodeHtml: '<div>three</div>'},
+                    {id: '4',nodeHtml: '<div>four</div>'},
                 ],
                 moveLi: false,
                 down: false,
@@ -806,31 +808,44 @@
             },
             // 点击按下元素
             startChild(index, e) {
+                console.log(e);
+                console.log(index);
+                let enableDrag = localStorage.getItem("ENABLE_DRAG");
+                localStorage.setItem("ENABLE_MOVE_FLAG", "1");
+                if (this.validField(enableDrag)) {
+                    return;
+                }
                 // 存储当前节点索引
                 localStorage.setItem("CURRENT_NODE_INDEX", index);
                 // 存储当前节点ID
                 localStorage.setItem("CURRENT_NODE_ID", e.target.getAttribute("id"));
                 localStorage.setItem("PARENT_NODE_IN_X", e.target.offsetLeft); // 父元素中元素X坐标
                 localStorage.setItem("PARENT_NODE_IN_Y", e.target.offsetTop);  // 父元素中元素Y坐标
-                localStorage.setItem("mouse-click-x", e.clientX); // 鼠标整个页面的x坐标
-                localStorage.setItem("mouse-click-y", e.clientY); // 鼠标整个页面的y坐标
                 localStorage.setItem("PARENT_NODE_MOUSE_IN_X", (e.offsetX + e.target.offsetLeft) + "")  // 父元素中鼠标X;
                 localStorage.setItem("PARENT_NODE_MOUSE_IN_Y", (e.offsetY + e.target.offsetTop) + "") // 父元素中鼠标Y;
+                localStorage.setItem("CURRENT_NODE_MOUSE_X", e.offsetX);
+                localStorage.setItem("CURRENT_NODE_MOUSE_Y", e.offsetY);
             },
             // 点击按上元素
             endChild: function (e) {
+                localStorage.removeItem("ENABLE_MOVE_FLAG");
                 //删除插入盒子标识
                 if (null !== localStorage.getItem("PLACEHOLDER_CONTAINER")) {
                     let index = parseInt(localStorage.getItem("PLACEHOLDER_CONTAINER"));
                     let parent = e.target.parentNode;
                     let tempNode = parent.childNodes[index];
-                    let offsetX = tempNode.offsetLeft
-                    // (-84 + 12)
-                    let offsetY = tempNode.offsetTop - 84
-                    let currLiX = localStorage.getItem("CURRENT_NODE_IN_PARENT_LEFT");
-                    let currLiY = localStorage.getItem("CURRENT_NODE_IN_PARENT_TOP") - 12;
-                    let dx = parseInt(currLiX) - offsetX;
-                    let dy = parseInt(currLiY) - offsetY;
+                    // console.log(parseInt(e.target.style.top))
+                    let moveNodeTop = localStorage.getItem("CURRENT_MOVE_NODE_TOP");
+                    let moveNodeLeft = localStorage.getItem("CURRENT_MOVE_NODE_LEFT");
+
+                    let offsetX, offsetY;
+                    // let currLiX = parseInt(e.target.style.left) - tempNode.offsetLeft;
+                    // let currLiY = parseInt(e.target.style.top) - tempNode.offsetTop + 12;
+                    let currLiX = parseInt(moveNodeLeft) - tempNode.offsetLeft;
+                    let currLiY = parseInt(moveNodeTop) - (tempNode.offsetTop + tempNode.clientTop) + 13
+                    let dx = currLiX;
+                    // let dy = parseInt(currLiY) - offsetY;
+                    let dy = currLiY;
                     let dw = dx / 10;
                     let dh = dy / 10;
                     let time = 0;
@@ -844,42 +859,50 @@
                                 curr[0].style.width = '100%';
                                 curr[0].style.opacity = '1';
                                 curr[0].style.border = '1px solid transparent';
+                                curr[0].style.top = '0';
+                                curr[0].style.left = '0';
                             }
                             localStorage.removeItem("CURRENT_NODE_ID");
                             this.$refs['drop-ul-wrap'].removeChild(this.$refs['drop-ul-wrap'].childNodes[index]);
+                            // 排序
+                            this.sortNode(e.target, index);
                             localStorage.removeItem("PLACEHOLDER_CONTAINER");
+                            localStorage.removeItem("ENABLE_DRAG");
                         } else {
                             if (e.target.style.left !== undefined && e.target.style.left !== null) {
+                                // 设置禁用拖拽
+                                localStorage.setItem("ENABLE_DRAG", "false");
                                 let left = e.target.style.left.split("px")[0];
                                 let top = e.target.style.top.split("px")[0];
                                 if ((parseFloat(left).toFixed(1) * 10)/10 === 0 && time === 0) {
-                                    offsetX = (parseFloat(currLiX).toFixed(1) * 10 - parseFloat(dw).toFixed(1) * 10) / 10;
+                                    offsetX = (parseFloat(currLiX + '').toFixed(1) * 10 - parseFloat(dw).toFixed(1) * 10) / 10;
                                 } else {
                                     offsetX = (parseFloat(left).toFixed(1) * 10 - parseFloat(dw).toFixed(1) * 10) / 10;
                                 }
                                 if ((parseFloat(top).toFixed(1) * 10)/10 === 0 && time === 0) {
-                                    offsetY = (parseFloat(currLiY).toFixed(1) * 10 - parseFloat(dh).toFixed(1) * 10) / 10;
+                                    offsetY = (parseFloat(currLiY + '').toFixed(1) * 10 - parseFloat(dh).toFixed(1) * 10) / 10;
                                 } else {
                                     offsetY = (parseFloat(top).toFixed(1) * 10 - parseFloat(dh).toFixed(1) * 10) / 10;
                                 }
                             }
                             e.target.style.left = offsetX + 'px';
-                            // e.target.style.top = offsetY + 'px';
+                            e.target.style.top = offsetY + 'px';
                             time += 1;
                         }
                     }, 50);
+                } else {
+                    localStorage.removeItem("CURRENT_NODE_ID");
                 }
                 localStorage.removeItem("PARENT_NODE_IN_X");
                 localStorage.removeItem("PARENT_NODE_IN_Y");
-                localStorage.removeItem("mouse-click-x")
-                localStorage.removeItem("mouse-click-y")
-                localStorage.removeItem("mouse-click-init-x")
-                localStorage.removeItem("mouse-click-init-y")
-                localStorage.removeItem("move_flag");
-                localStorage.removeItem("CURRENT_NODE_IN_PARENT_TOP");
-                localStorage.removeItem("CURRENT_NODE_IN_PARENT_LEFT");
                 // 移除当前节点索引
                 localStorage.removeItem("CURRENT_NODE_INDEX");
+                localStorage.removeItem("PARENT_NODE_MOUSE_IN_X");
+                localStorage.removeItem("PARENT_NODE_MOUSE_IN_Y");
+                // 移除鼠标在当前节点坐标
+                localStorage.removeItem("CURRENT_NODE_MOUSE_X");
+                localStorage.removeItem("CURRENT_NODE_MOUSE_Y");
+
             },
             // 在节点前写入
             insertBefore(parentNode, targetNode) {
@@ -901,91 +924,102 @@
             },
             // 移动元素
             moveChild: function (e) {
-                //屏幕鼠标X坐标
-                let mouseClientX = e.clientX;
-                //屏幕鼠标Y坐标
-                let mouseClientY = e.clientY;
-                //父标签
-                let parentNode = e.target.parentNode;
-                // 相对于父元素的top浮动
-                let offsetTop = e.target.offsetTop;
-                // 相对于父元素的left浮动
-                let offsetLeft = e.target.offsetLeft;
-                // 鼠标在元素中的X坐标
-                let offsetX = e.offsetX
-                // 鼠标再元素中的Y坐标
-                let offsetY = e.offsetY
-                // 当前节点再父元素中的坐标
-                localStorage.setItem("CURRENT_NODE_IN_PARENT_TOP", offsetTop)
-                localStorage.setItem("CURRENT_NODE_IN_PARENT_LEFT", offsetLeft)
+                if (this.validField(localStorage.getItem("ENABLE_MOVE_FLAG"))) {
+                    //屏幕鼠标X坐标
+                    let mouseClientX = e.clientX;
+                    //屏幕鼠标Y坐标
+                    let mouseClientY = e.clientY;
+                    //父标签
+                    let parentNode = e.target.parentNode;
+                    // 相对于父元素的top浮动
+                    let offsetTop = e.target.offsetTop;
+                    // 相对于父元素的left浮动
+                    let offsetLeft = e.target.offsetLeft;
+                    // 元素左边框宽度
+                    let clientLeftWidth = e.target.clientLeft;
+                    // 鼠标在元素中的X坐标
+                    let offsetX = e.offsetX
+                    // 鼠标再元素中的Y坐标
+                    let offsetY = e.offsetY
+                    // 当前节点再父元素中的坐标
 
-                let currentNodeID = localStorage.getItem("CURRENT_NODE_ID");
-                if (this.validField(currentNodeID)) {
-                    if (mouseClientX > 0 && mouseClientY > 0) {
-                        let currentNode = this.$refs[currentNodeID];
-                        currentNode[0].style.position = 'absolute';
-                        currentNode[0].style.zIndex = '1000';
-                        currentNode[0].style.width = '100%';
-                        currentNode[0].style.opacity = '0.9';
-                        currentNode[0].style.border = '2px solid #2672ff';
-                        // 设置当前节点坐标
-                        // left = mouseClientX - 左侧控件宽度 - 鼠标在li的X坐标
-                        // top = mouseClientY -顶部坐标 - 鼠标在li的Y坐标
-                        let diffX = parseInt(localStorage.getItem("PARENT_NODE_MOUSE_IN_Y")) - parseInt(localStorage.getItem("PARENT_NODE_IN_Y"));
-                        let diffY = parseInt(localStorage.getItem("PARENT_NODE_MOUSE_IN_Y")) - parseInt(localStorage.getItem("PARENT_NODE_IN_Y"));
-                        // 在ul中的坐标
-                        console.log()
-                        currentNode[0].style.left = (mouseClientX - (this.$refs['view-box'].parentNode.offsetLeft + this.$refs['view-box'].clientLeft) - parseInt(localStorage.getItem("mouse-click-init-x"))) + 'px';
-                        currentNode[0].style.top = mouseClientY - (this.$refs['view-box'].parentNode.offsetTop + this.$refs['formHeader'].offsetHeight + this.$refs['drop-ul-wrap'].offsetTop) - d - 13 + 'px';
+                    let currentNodeID = localStorage.getItem("CURRENT_NODE_ID");
+                    console.log(currentNodeID)
+                    if (this.validField(currentNodeID)) {
+                        if (mouseClientX > 0 && mouseClientY > 0) {
+                            let currentNode = this.$refs[currentNodeID];
+                            currentNode[0].style.position = 'absolute';
+                            currentNode[0].style.zIndex = '1000';
+                            currentNode[0].style.width = '100%';
+                            currentNode[0].style.opacity = '0.9';
+                            currentNode[0].style.border = '2px solid #2672ff';
+                            // 设置当前节点坐标
+                            let currentNodeMouseX = localStorage.getItem("CURRENT_NODE_MOUSE_X");
+                            let currentNodeMouseY = localStorage.getItem("CURRENT_NODE_MOUSE_Y");
+                            // 在ul中的坐标
+                            let topHeight = this.$refs['form-header'].clientTop + this.$refs['form-header'].offsetHeight;
+                            let formHeaderHeight = this.$refs['formHeader'].offsetHeight;
+                            let ulTopHeight = this.$refs['drop-ul-wrap'].offsetTop;
+                            let liTopHeight = e.target.clientTop + 12;
+                            currentNode[0].style.left = (mouseClientX - (this.$refs['view-box'].parentNode.offsetLeft + this.$refs['view-box'].clientLeft)) - parseInt(currentNodeMouseX) + 'px';
+                            currentNode[0].style.top = mouseClientY - (topHeight + formHeaderHeight + ulTopHeight) - parseInt(currentNodeMouseY) - liTopHeight + 'px';
+                            // 记录当前移动坐标位置
+                            localStorage.setItem("CURRENT_MOVE_NODE_TOP",currentNode[0].style.top)
+                            localStorage.setItem("CURRENT_MOVE_NODE_LEFT",currentNode[0].style.left)
 
-                        let currNodeIndex = parseInt(localStorage.getItem("CURRENT_NODE_INDEX"));
-                        // 占位容器(存索引)
-                        let placeholderContainer = localStorage.getItem("PLACEHOLDER_CONTAINER");
-                        // 鼠标在父容器中Y坐标
-                        let mouseInParentY = offsetX + offsetTop;
-                        // 是否已存在占位容器
-                        if (!this.validField(placeholderContainer)) {
-                            this.insertAfter(parentNode, e.target);
-                            localStorage.setItem("PLACEHOLDER_CONTAINER", (currNodeIndex + 1) + '');
-                        } else {
-                            // 占位容器前兄弟节点
-                            let preNode = parentNode.childNodes[placeholderContainer].previousElementSibling;
-                            // 节点中心Y坐标距父元素高度
-                            let preCenterHeightY = preNode.offsetTop + (preNode.clientHeight + preNode.clientTop * 2) / 2;
-                            // 与移动元素相同
-                            if (preNode === e.target) {
-                                preNode = preNode.previousElementSibling;
-                                if (this.validField(preNode)) {
-                                    if (mouseInParentY < preCenterHeightY) {
-                                        // 移除占位容器
-                                        parentNode.removeChild(parentNode.childNodes[placeholderContainer])
-                                        // 新增占位容器
-                                        this.insertBefore(parentNode, preNode);
-                                        localStorage.setItem("PLACEHOLDER_CONTAINER", (parseInt(placeholderContainer) - 2) + '');
-                                    }
-                                }
+                            let currNodeIndex = parseInt(localStorage.getItem("CURRENT_NODE_INDEX"));
+                            // 占位容器(存索引)
+                            let placeholderContainer = localStorage.getItem("PLACEHOLDER_CONTAINER");
+                            // 鼠标在父容器中Y坐标
+                            let mouseInParentY = offsetY + offsetTop;
+                            // 是否已存在占位容器
+                            if (!this.validField(placeholderContainer)) {
+                                this.insertAfter(parentNode, e.target);
+                                localStorage.setItem("PLACEHOLDER_CONTAINER", (currNodeIndex + 1) + '');
                             } else {
-                                if (this.validField(preNode)) {
-                                    if (mouseInParentY < preCenterHeightY) {
-                                        // 移除标识
-                                        parentNode.removeChild(parentNode.childNodes[placeholderContainer])
-                                        // 新增标识
-                                        this.insertBefore(parentNode, preNode);
-                                        localStorage.setItem("PLACEHOLDER_CONTAINER", (parseInt(placeholderContainer) - 1) + '');
+                                // 占位容器前兄弟节点
+                                if (this.validField(parentNode.childNodes[placeholderContainer])) {
+                                    let preNode = parentNode.childNodes[placeholderContainer].previousElementSibling;
+                                    if (this.validField(preNode)) {
+                                        // 节点中心Y坐标距父元素高度
+                                        let preCenterHeightY = preNode.offsetTop + (preNode.clientHeight + preNode.clientTop * 2) / 2;
+                                        // 与移动元素相同
+                                        if (preNode === e.target) {
+                                            preNode = preNode.previousElementSibling;
+                                            if (this.validField(preNode)) {
+                                                if (mouseInParentY < preCenterHeightY) {
+                                                    // 移除占位容器
+                                                    parentNode.removeChild(parentNode.childNodes[placeholderContainer])
+                                                    // 新增占位容器
+                                                    this.insertBefore(parentNode, preNode);
+                                                    localStorage.setItem("PLACEHOLDER_CONTAINER", (parseInt(placeholderContainer) - 2) + '');
+                                                }
+                                            }
+                                        } else {
+                                            if (mouseInParentY < preCenterHeightY) {
+                                                // 移除标识
+                                                parentNode.removeChild(parentNode.childNodes[placeholderContainer])
+                                                // 新增标识
+                                                this.insertBefore(parentNode, preNode);
+                                                localStorage.setItem("PLACEHOLDER_CONTAINER", (parseInt(placeholderContainer) - 1) + '');
+                                            }
+                                        }
                                     }
                                 }
-                            }
 
-                            // 占位容器后兄弟节点
-                            let nextNode = parentNode.childNodes[placeholderContainer].nextElementSibling;
-                            let nextCenterHeightY = nextNode.offsetTop + (nextNode.clientHeight + nextNode.clientTop * 2) / 2;
-                            if (this.validField(nextNode)) {
-                                if (mouseInParentY > nextCenterHeightY) {
-                                    // 移除标识
-                                    parentNode.removeChild(parentNode.childNodes[placeholderContainer])
-                                    // 新增标识
-                                    this.insertAfter(parentNode, nextNode);
-                                    localStorage.setItem("PLACEHOLDER_CONTAINER", (parseInt(placeholderContainer) + 1) + '');
+                                // 占位容器后兄弟节点
+                                if (this.validField(parentNode.childNodes[placeholderContainer])) {
+                                    let nextNode = parentNode.childNodes[placeholderContainer].nextElementSibling;
+                                    if (this.validField(nextNode)) {
+                                        let nextCenterHeightY = nextNode.offsetTop + (nextNode.clientHeight + nextNode.clientTop * 2) / 2;
+                                        if (mouseInParentY > nextCenterHeightY) {
+                                            // 移除标识
+                                            parentNode.removeChild(parentNode.childNodes[placeholderContainer])
+                                            // 新增标识
+                                            this.insertAfter(parentNode, nextNode);
+                                            localStorage.setItem("PLACEHOLDER_CONTAINER", (parseInt(placeholderContainer) + 1) + '');
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -1004,6 +1038,14 @@
                 } else {
                     return false;
                 }
+            },
+            // 节点排序
+            sortNode(node, index) {
+                let parentNode = node.parentNode;
+                parentNode.removeChild(node);
+                parentNode.insertBefore(node, parentNode.childNodes[index - 1]);
+                console.log(this.formItem)
+
             }
         },
         components: {
