@@ -67,7 +67,7 @@
                             <div v-if="formItem.length===0" class="no-plug-wrap">
                                 <div class="prompt-info">
                                     <div class="left-img">
-<!--                                        <img @dragstart="noDrag" src="../assets/nomessagen.png" alt="">-->
+                                        <img @dragstart="noDrag" src="../assets/nomessagen.png" alt="">
                                     </div>
                                     <div class="right-text">
                                         <div class="paragraph">当前表单暂无内容，你可以</div>
