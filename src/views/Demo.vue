@@ -840,6 +840,9 @@
                     let index = parseInt(localStorage.getItem("PLACEHOLDER_CONTAINER"));
                     let parent = e.currentTarget;
                     let tempNode = parent.childNodes[index];
+                    console.log(index);
+                    console.log(parent);
+                    console.log(tempNode);
                     let moveNodeTop = localStorage.getItem("CURRENT_MOVE_NODE_TOP");
                     let moveNodeLeft = localStorage.getItem("CURRENT_MOVE_NODE_LEFT");
 
@@ -973,31 +976,21 @@
                                     if (currNodeIndex === 0) {
                                         preNode = parentNode.childNodes[placeholderContainer].previousElementSibling;
                                     } else{
-                                        parentNode.childNodes[placeholderContainer].previousElementSibling.previousElementSibling;
+                                        preNode = parentNode.childNodes[placeholderContainer].previousElementSibling.previousElementSibling;
                                     }
                                     if (this.validField(preNode)) {
                                         // 节点中心Y坐标距父元素高度
                                         let preCenterHeightY = preNode.offsetTop + (preNode.clientHeight + preNode.clientTop * 2) / 2;
                                         // 与移动元素相同
-                                        // if (preNode === liNode) {
-                                        //     if (this.validField(preNode)) {
-                                        //         if (mouseInParentY < preCenterHeightY) {
-                                        //             // 移除占位容器
-                                        //             parentNode.removeChild(parentNode.childNodes[placeholderContainer])
-                                        //             // 新增占位容器
-                                        //             this.insertBefore(parentNode, preNode);
-                                        //             localStorage.setItem("PLACEHOLDER_CONTAINER", (parseInt(placeholderContainer) - 2) + '');
-                                        //         }
-                                        //     }
-                                        // } else {
-                                        //     if (mouseInParentY < preCenterHeightY) {
-                                        //         // 移除标识
-                                        //         parentNode.removeChild(parentNode.childNodes[placeholderContainer])
-                                        //         // 新增标识
-                                        //         this.insertBefore(parentNode, preNode);
-                                        //         localStorage.setItem("PLACEHOLDER_CONTAINER", (parseInt(placeholderContainer) - 1) + '');
-                                        //     }
-                                        // }
+                                        if (preNode !== liNode) {
+                                            if (mouseInParentY < preCenterHeightY) {
+                                                // 移除标识
+                                                parentNode.removeChild(parentNode.childNodes[placeholderContainer])
+                                                // 新增标识
+                                                this.insertBefore(parentNode, preNode);
+                                                localStorage.setItem("PLACEHOLDER_CONTAINER", (parseInt(placeholderContainer) - 1) + '');
+                                            }
+                                        }
                                     }
 
                                     // 占位容器后兄弟节点
@@ -1054,19 +1047,24 @@
                 }
             },
             // 节点排序
-            sortNode(node, index) {
-                // let parentNode = node.parentNode;
-                // parentNode.removeChild(node);
-                // parentNode.insertBefore(node, parentNode.childNodes[index - 1]);
-                let id, label;
-                this.formItem.forEach(item => {
+            sortNode(node, idx) {
+                let remIndex,newNode;
+                this.formItem.forEach((item, index) => {
                     if (item.id === node.id) {
-                        id = item.id;
-                        label = item.label;
-                        this.formItem.splice(item, 1);
+                        remIndex = index;
+                        newNode = JSON.parse(JSON.stringify(item));
                     }
-                })
-                this.formItem.splice(index - 1, 0, {id: id, label: label});
+                });
+                this.formItem.splice(remIndex, 1); // 删除
+                this.formItem.splice(idx - 1, 0, newNode); // 新增
+
+                // 替换
+                // let nodeOne = JSON.parse(JSON.stringify(this.formItem[remIndex]));
+                // let nodeTwo = JSON.parse(JSON.stringify(this.formItem[idx - 1]));
+                // this.formItem.splice(remIndex, 0, nodeTwo)
+                // this.formItem.splice(idx - 1, 0, nodeOne);
+
+                // 替换
             }
         },
         components: {
