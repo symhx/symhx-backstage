@@ -77,13 +77,11 @@
                                 </div>
                             </div>
                             <ul ref="drop-ul-wrap" @mousemove="moveChild" @mouseleave="outChild" @mouseup="endChild">
-                                <template v-for="(item,index) in formItem" >
-<!--                                    <li :key="'item'+index" :id="item.id" :ref="item.id" @mousedown="startChild(index,$event)">-->
-<!--                                        <div v-html="item.nodeHtml"></div>-->
-<!--                                    </li>-->
-                                    <li :key="'item'+index" :id="item.id" :ref="item.id" @mousedown="startChild(index,$event)" v-html="item.nodeHtml">
-                                    </li>
-                                </template>
+                                <li :key="'item'+index" v-for="(item,index) in formItem" :id="item.id" :ref="item.id" @mousedown="startChild(index,$event)" >
+<!--                                    <div v-html="item.nodeHtml"></div>-->
+<!--                                    123-->
+                                    <component :is="item.label"></component>
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -98,7 +96,7 @@
             <div id="right" class="right-property-wrap">
                 <div class="notice" style="background: #fff;;line-height: 22px;" id="noFieldSelected">
                     <div style="margin: 64px 0 16px ">
-<!--                        <img src="../assets/nomessagen.png" @dragstart="noDrag">-->
+                        <img src="../assets/nomessagen.png" @dragstart="noDrag">
                     </div>
                     <div>没有选择字段</div>
                     <p>请在右侧表单选择字段然后在此处编辑属性</p>
@@ -109,6 +107,8 @@
 </template>
 
 <script>
+    import radio from '../components/form/Radio'
+    import checkBox from '../components/form/CheckBox'
     export default {
         name: "Demo",
         data() {
@@ -583,10 +583,10 @@
                     }
                 ],
                 formItem: [
-                    {id: '1',nodeHtml: '<div>one</div>'},
-                    {id: '2',nodeHtml: '<div>two</div>'},
-                    {id: '3',nodeHtml: '<div>three</div>'},
-                    {id: '4',nodeHtml: '<div>four</div>'},
+                    {id: '121', label: 'radio'},
+                    {id: '232', label: 'checkBox'},
+                    {id: '343', label: 'checkBox'},
+                    {id: '454', label: 'radio'},
                 ],
                 moveLi: false,
                 down: false,
@@ -638,6 +638,7 @@
             this.position.clientHeight = this.computingClientHeight;
             this.position.offsetX = this.computingOffsetX;
             this.position.offsetY = this.computingOffsetY;
+            localStorage.clear();
         },
         created() {
         },
@@ -808,8 +809,6 @@
             },
             // 点击按下元素
             startChild(index, e) {
-                console.log(e);
-                console.log(index);
                 let enableDrag = localStorage.getItem("ENABLE_DRAG");
                 localStorage.setItem("ENABLE_MOVE_FLAG", "1");
                 if (this.validField(enableDrag)) {
@@ -818,11 +817,11 @@
                 // 存储当前节点索引
                 localStorage.setItem("CURRENT_NODE_INDEX", index);
                 // 存储当前节点ID
-                localStorage.setItem("CURRENT_NODE_ID", e.target.getAttribute("id"));
-                localStorage.setItem("PARENT_NODE_IN_X", e.target.offsetLeft); // 父元素中元素X坐标
-                localStorage.setItem("PARENT_NODE_IN_Y", e.target.offsetTop);  // 父元素中元素Y坐标
-                localStorage.setItem("PARENT_NODE_MOUSE_IN_X", (e.offsetX + e.target.offsetLeft) + "")  // 父元素中鼠标X;
-                localStorage.setItem("PARENT_NODE_MOUSE_IN_Y", (e.offsetY + e.target.offsetTop) + "") // 父元素中鼠标Y;
+                localStorage.setItem("CURRENT_NODE_ID", e.currentTarget.getAttribute("id"));
+                localStorage.setItem("PARENT_NODE_IN_X", e.currentTarget.offsetLeft + ''); // 父元素中元素X坐标
+                localStorage.setItem("PARENT_NODE_IN_Y", e.currentTarget.offsetTop + '');  // 父元素中元素Y坐标
+                localStorage.setItem("PARENT_NODE_MOUSE_IN_X", (e.offsetX + e.currentTarget.offsetLeft) + "")  // 父元素中鼠标X;
+                localStorage.setItem("PARENT_NODE_MOUSE_IN_Y", (e.offsetY + e.currentTarget.offsetTop) + "") // 父元素中鼠标Y;
                 localStorage.setItem("CURRENT_NODE_MOUSE_X", e.offsetX);
                 localStorage.setItem("CURRENT_NODE_MOUSE_Y", e.offsetY);
             },
@@ -830,21 +829,24 @@
             endChild: function (e) {
                 localStorage.removeItem("ENABLE_MOVE_FLAG");
                 //删除插入盒子标识
+                let liNode = e.target;
+                if (liNode.localName === 'ul'){
+                    return;
+                }
+                while (liNode.localName !== 'li') {
+                    liNode = liNode.parentNode;
+                }
                 if (null !== localStorage.getItem("PLACEHOLDER_CONTAINER")) {
                     let index = parseInt(localStorage.getItem("PLACEHOLDER_CONTAINER"));
-                    let parent = e.target.parentNode;
+                    let parent = e.currentTarget;
                     let tempNode = parent.childNodes[index];
-                    // console.log(parseInt(e.target.style.top))
                     let moveNodeTop = localStorage.getItem("CURRENT_MOVE_NODE_TOP");
                     let moveNodeLeft = localStorage.getItem("CURRENT_MOVE_NODE_LEFT");
 
                     let offsetX, offsetY;
-                    // let currLiX = parseInt(e.target.style.left) - tempNode.offsetLeft;
-                    // let currLiY = parseInt(e.target.style.top) - tempNode.offsetTop + 12;
                     let currLiX = parseInt(moveNodeLeft) - tempNode.offsetLeft;
                     let currLiY = parseInt(moveNodeTop) - (tempNode.offsetTop + tempNode.clientTop) + 13
                     let dx = currLiX;
-                    // let dy = parseInt(currLiY) - offsetY;
                     let dy = currLiY;
                     let dw = dx / 10;
                     let dh = dy / 10;
@@ -865,15 +867,15 @@
                             localStorage.removeItem("CURRENT_NODE_ID");
                             this.$refs['drop-ul-wrap'].removeChild(this.$refs['drop-ul-wrap'].childNodes[index]);
                             // 排序
-                            this.sortNode(e.target, index);
+                            this.sortNode(liNode, index);
                             localStorage.removeItem("PLACEHOLDER_CONTAINER");
                             localStorage.removeItem("ENABLE_DRAG");
                         } else {
-                            if (e.target.style.left !== undefined && e.target.style.left !== null) {
+                            if (liNode.style.left !== undefined && liNode.style.left !== null) {
                                 // 设置禁用拖拽
                                 localStorage.setItem("ENABLE_DRAG", "false");
-                                let left = e.target.style.left.split("px")[0];
-                                let top = e.target.style.top.split("px")[0];
+                                let left = liNode.style.left.split("px")[0];
+                                let top = liNode.style.top.split("px")[0];
                                 if ((parseFloat(left).toFixed(1) * 10)/10 === 0 && time === 0) {
                                     offsetX = (parseFloat(currLiX + '').toFixed(1) * 10 - parseFloat(dw).toFixed(1) * 10) / 10;
                                 } else {
@@ -885,8 +887,8 @@
                                     offsetY = (parseFloat(top).toFixed(1) * 10 - parseFloat(dh).toFixed(1) * 10) / 10;
                                 }
                             }
-                            e.target.style.left = offsetX + 'px';
-                            e.target.style.top = offsetY + 'px';
+                            liNode.style.left = offsetX + 'px';
+                            liNode.style.top = offsetY + 'px';
                             time += 1;
                         }
                     }, 50);
@@ -902,49 +904,37 @@
                 // 移除鼠标在当前节点坐标
                 localStorage.removeItem("CURRENT_NODE_MOUSE_X");
                 localStorage.removeItem("CURRENT_NODE_MOUSE_Y");
-
-            },
-            // 在节点前写入
-            insertBefore(parentNode, targetNode) {
-                let element = document.createElement("li");
-                element.setAttribute("class", "sortable-placeholder");
-                parentNode.insertBefore(element,targetNode)
-            },
-            // 在节点后写入
-            insertAfter (parentNode, targetNode) {
-                let element = document.createElement("li");
-                element.setAttribute("class", "sortable-placeholder");
-                if (parentNode.lastChild == targetNode) {
-                    // 如果最后的节点是目标元素，则直接添加。因为默认是最后
-                    parentNode.appendChild(element);
-                } else {
-                    // 如果不是，则插入在目标元素的下一个兄弟节点 的前面。也就是目标元素的后面
-                    parentNode.insertBefore(element, targetNode.nextSibling);
-                }
             },
             // 移动元素
             moveChild: function (e) {
+                // 获取li对象
+                let liNode = e.target;
+                if (liNode.localName === 'ul'){
+                    return;
+                }
+                while (liNode.localName !== 'li') {
+                    liNode = liNode.parentNode;
+                }
                 if (this.validField(localStorage.getItem("ENABLE_MOVE_FLAG"))) {
                     //屏幕鼠标X坐标
                     let mouseClientX = e.clientX;
                     //屏幕鼠标Y坐标
                     let mouseClientY = e.clientY;
                     //父标签
-                    let parentNode = e.target.parentNode;
+                    let parentNode = e.currentTarget;
                     // 相对于父元素的top浮动
-                    let offsetTop = e.target.offsetTop;
+                    let offsetTop = liNode.offsetTop;
                     // 相对于父元素的left浮动
-                    let offsetLeft = e.target.offsetLeft;
+                    let offsetLeft = liNode.offsetLeft;
                     // 元素左边框宽度
-                    let clientLeftWidth = e.target.clientLeft;
+                    let clientLeftWidth = liNode.clientLeft;
                     // 鼠标在元素中的X坐标
-                    let offsetX = e.offsetX
+                    let offsetX = e.offsetX;
                     // 鼠标再元素中的Y坐标
-                    let offsetY = e.offsetY
+                    let offsetY = e.offsetY;
                     // 当前节点再父元素中的坐标
 
                     let currentNodeID = localStorage.getItem("CURRENT_NODE_ID");
-                    console.log(currentNodeID)
                     if (this.validField(currentNodeID)) {
                         if (mouseClientX > 0 && mouseClientY > 0) {
                             let currentNode = this.$refs[currentNodeID];
@@ -960,7 +950,7 @@
                             let topHeight = this.$refs['form-header'].clientTop + this.$refs['form-header'].offsetHeight;
                             let formHeaderHeight = this.$refs['formHeader'].offsetHeight;
                             let ulTopHeight = this.$refs['drop-ul-wrap'].offsetTop;
-                            let liTopHeight = e.target.clientTop + 12;
+                            let liTopHeight = liNode.clientTop + 12;
                             currentNode[0].style.left = (mouseClientX - (this.$refs['view-box'].parentNode.offsetLeft + this.$refs['view-box'].clientLeft)) - parseInt(currentNodeMouseX) + 'px';
                             currentNode[0].style.top = mouseClientY - (topHeight + formHeaderHeight + ulTopHeight) - parseInt(currentNodeMouseY) - liTopHeight + 'px';
                             // 记录当前移动坐标位置
@@ -974,45 +964,50 @@
                             let mouseInParentY = offsetY + offsetTop;
                             // 是否已存在占位容器
                             if (!this.validField(placeholderContainer)) {
-                                this.insertAfter(parentNode, e.target);
+                                this.insertAfter(parentNode, liNode);
                                 localStorage.setItem("PLACEHOLDER_CONTAINER", (currNodeIndex + 1) + '');
                             } else {
-                                // 占位容器前兄弟节点
                                 if (this.validField(parentNode.childNodes[placeholderContainer])) {
-                                    let preNode = parentNode.childNodes[placeholderContainer].previousElementSibling;
+                                    // 占位容器前兄弟节点
+                                    let preNode;
+                                    if (currNodeIndex === 0) {
+                                        preNode = parentNode.childNodes[placeholderContainer].previousElementSibling;
+                                    } else{
+                                        parentNode.childNodes[placeholderContainer].previousElementSibling.previousElementSibling;
+                                    }
                                     if (this.validField(preNode)) {
                                         // 节点中心Y坐标距父元素高度
                                         let preCenterHeightY = preNode.offsetTop + (preNode.clientHeight + preNode.clientTop * 2) / 2;
                                         // 与移动元素相同
-                                        if (preNode === e.target) {
-                                            preNode = preNode.previousElementSibling;
-                                            if (this.validField(preNode)) {
-                                                if (mouseInParentY < preCenterHeightY) {
-                                                    // 移除占位容器
-                                                    parentNode.removeChild(parentNode.childNodes[placeholderContainer])
-                                                    // 新增占位容器
-                                                    this.insertBefore(parentNode, preNode);
-                                                    localStorage.setItem("PLACEHOLDER_CONTAINER", (parseInt(placeholderContainer) - 2) + '');
-                                                }
-                                            }
-                                        } else {
-                                            if (mouseInParentY < preCenterHeightY) {
-                                                // 移除标识
-                                                parentNode.removeChild(parentNode.childNodes[placeholderContainer])
-                                                // 新增标识
-                                                this.insertBefore(parentNode, preNode);
-                                                localStorage.setItem("PLACEHOLDER_CONTAINER", (parseInt(placeholderContainer) - 1) + '');
-                                            }
-                                        }
+                                        // if (preNode === liNode) {
+                                        //     if (this.validField(preNode)) {
+                                        //         if (mouseInParentY < preCenterHeightY) {
+                                        //             // 移除占位容器
+                                        //             parentNode.removeChild(parentNode.childNodes[placeholderContainer])
+                                        //             // 新增占位容器
+                                        //             this.insertBefore(parentNode, preNode);
+                                        //             localStorage.setItem("PLACEHOLDER_CONTAINER", (parseInt(placeholderContainer) - 2) + '');
+                                        //         }
+                                        //     }
+                                        // } else {
+                                        //     if (mouseInParentY < preCenterHeightY) {
+                                        //         // 移除标识
+                                        //         parentNode.removeChild(parentNode.childNodes[placeholderContainer])
+                                        //         // 新增标识
+                                        //         this.insertBefore(parentNode, preNode);
+                                        //         localStorage.setItem("PLACEHOLDER_CONTAINER", (parseInt(placeholderContainer) - 1) + '');
+                                        //     }
+                                        // }
                                     }
-                                }
 
-                                // 占位容器后兄弟节点
-                                if (this.validField(parentNode.childNodes[placeholderContainer])) {
+                                    // 占位容器后兄弟节点
                                     let nextNode = parentNode.childNodes[placeholderContainer].nextElementSibling;
                                     if (this.validField(nextNode)) {
                                         let nextCenterHeightY = nextNode.offsetTop + (nextNode.clientHeight + nextNode.clientTop * 2) / 2;
-                                        if (mouseInParentY > nextCenterHeightY) {
+                                        console.log(nextNode.offsetTop)
+                                        console.log(mouseInParentY)
+                                        console.log(nextCenterHeightY)
+                                        if (mouseInParentY >= nextCenterHeightY) {
                                             // 移除标识
                                             parentNode.removeChild(parentNode.childNodes[placeholderContainer])
                                             // 新增标识
@@ -1039,16 +1034,43 @@
                     return false;
                 }
             },
+            // 在节点前写入
+            insertBefore(parentNode, targetNode) {
+                let element = document.createElement("li");
+                element.setAttribute("class", "sortable-placeholder");
+                parentNode.insertBefore(element,targetNode)
+            },
+            // 在节点后写入
+            insertAfter (parentNode, targetNode) {
+                let element = document.createElement("li");
+                element.setAttribute("class", "sortable-placeholder");
+                if (parentNode.lastChild === targetNode) {
+                    // 如果最后的节点是目标元素，则直接添加。因为默认是最后
+                    parentNode.appendChild(element);
+                } else {
+                    console.log(targetNode)
+                    // 如果不是，则插入在目标元素的下一个兄弟节点 的前面。也就是目标元素的后面
+                    parentNode.insertBefore(element, targetNode.nextSibling);
+                }
+            },
             // 节点排序
             sortNode(node, index) {
-                let parentNode = node.parentNode;
-                parentNode.removeChild(node);
-                parentNode.insertBefore(node, parentNode.childNodes[index - 1]);
-                console.log(this.formItem)
-
+                // let parentNode = node.parentNode;
+                // parentNode.removeChild(node);
+                // parentNode.insertBefore(node, parentNode.childNodes[index - 1]);
+                let id, label;
+                this.formItem.forEach(item => {
+                    if (item.id === node.id) {
+                        id = item.id;
+                        label = item.label;
+                        this.formItem.splice(item, 1);
+                    }
+                })
+                this.formItem.splice(index - 1, 0, {id: id, label: label});
             }
         },
         components: {
+            radio, checkBox
         }
     }
 </script>
@@ -1181,14 +1203,17 @@
         margin-top: 12px;
         border-radius: 4px;
         background-color: #fff;
-        box-shadow: 0 2px 4px 0 rgba(0,0,0,0.1);
-        height: 60px;
-        line-height: 60px;
+        box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+        min-height: 60px;
         overflow: visible;
         color: #484848;
         text-align: left;
         border: 1px solid transparent;
         position: relative;
+    }
+    .form-body>ul>li.sortable-placeholder{
+        height: 12px!important;
+        min-height: 12px!important;
     }
     .form-body>ul>li:not(.sortable-placeholder):hover{
         cursor: pointer;
