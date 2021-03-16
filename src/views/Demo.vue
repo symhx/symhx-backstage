@@ -863,7 +863,6 @@
                                 curr[0].style.left = '0';
                             }
                             localStorage.removeItem("CURRENT_NODE_ID");
-                            this.$refs['drop-ul-wrap'].removeChild(this.$refs['drop-ul-wrap'].childNodes[index]);
                             // 排序
                             this.sortNode(liNode, index);
                             localStorage.removeItem("PLACEHOLDER_CONTAINER");
@@ -970,8 +969,9 @@
                                     let preNode;
                                     if (currNodeIndex === 0) {
                                         preNode = parentNode.childNodes[placeholderContainer].previousElementSibling;
-                                        console.log(preNode);
-                                        // preNode = null;
+                                        if (preNode === liNode) {
+                                            preNode = null;
+                                        }
                                     } else{
                                         preNode = parentNode.childNodes[placeholderContainer].previousElementSibling;
                                         if (this.validField(preNode)) {
@@ -998,13 +998,13 @@
                                             }
                                             if (preNode.nextElementSibling === liNode) {
                                                 if (!this.validField(localStorage.getItem("HAS_MOVE_MORE_STEP"))) {
-                                                    localStorage.setItem("PLACEHOLDER_CONTAINER", (parseInt(placeholderContainer) - 2) + '');
+                                                    this.changeTempNodeIndex(2)
                                                     localStorage.setItem("HAS_MOVE_MORE_STEP", "1");
                                                 } else {
-                                                    localStorage.setItem("PLACEHOLDER_CONTAINER", (parseInt(placeholderContainer) - 1) + '');
+                                                    this.changeTempNodeIndex(1)
                                                 }
                                             } else {
-                                                localStorage.setItem("PLACEHOLDER_CONTAINER", (parseInt(placeholderContainer) - 1) + '');
+                                                this.changeTempNodeIndex(1)
                                             }
                                         }
                                     }
@@ -1026,9 +1026,9 @@
                                                 this.insertAfter(parentNode, nextNode);
                                                 if (flag) {
                                                     localStorage.removeItem("HAS_MOVE_MORE_STEP");
-                                                    localStorage.setItem("PLACEHOLDER_CONTAINER", (parseInt(placeholderContainer) + 2) + '');
+                                                    this.changeTempNodeIndex(-2);
                                                 } else {
-                                                    localStorage.setItem("PLACEHOLDER_CONTAINER", (parseInt(placeholderContainer) + 1) + '');
+                                                    this.changeTempNodeIndex(-1);
                                                 }
                                             }
                                         }
@@ -1072,6 +1072,9 @@
             },
             // 节点排序
             sortNode(node, idx) {
+                console.log(node);
+                console.log(idx);
+                node.parentNode.removeChild(node.parentNode.childNodes[idx]);
                 let remIndex,newNode;
                 this.formItem.forEach((item, index) => {
                     if (item.id === node.id) {
@@ -1081,8 +1084,13 @@
                 });
                 console.log('待删第'+remIndex+'个-----新增至---' + idx);
                 this.formItem.splice(remIndex, 1); // 删除
-                this.formItem.splice(idx - 1, 0, newNode); // 新增
-                // this.formItem.splice(idx, 0, newNode); // 新增
+                // this.formItem.splice(idx - 1, 0, newNode); // 下移新增
+                this.formItem.splice(idx, 0, newNode); // 上移新增
+            },
+            // 变更临时节点索引
+            changeTempNodeIndex(step) {
+                let tempNodeIndex = localStorage.getItem("PLACEHOLDER_CONTAINER")
+                localStorage.setItem("PLACEHOLDER_CONTAINER", (parseInt(tempNodeIndex) - step) + '');
             }
         },
         components: {
