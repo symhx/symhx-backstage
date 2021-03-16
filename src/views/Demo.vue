@@ -647,7 +647,6 @@
                 return this.$refs['drop-ul-wrap'].clientWidth;
             },
             computingClientHeight() {
-                console.log();
                 return this.$refs['drop-ul-wrap'].clientHeight;
             },
             computingOffsetX() {
@@ -804,8 +803,7 @@
             },
             // 选中组件
             activePlus(e) {
-                console.log(e);
-                console.log(e.target);
+                console.log(e.currentTarget);
             },
             // 点击按下元素
             startChild(index, e) {
@@ -840,9 +838,6 @@
                     let index = parseInt(localStorage.getItem("PLACEHOLDER_CONTAINER"));
                     let parent = e.currentTarget;
                     let tempNode = parent.childNodes[index];
-                    console.log(index);
-                    console.log(parent);
-                    console.log(tempNode);
                     let moveNodeTop = localStorage.getItem("CURRENT_MOVE_NODE_TOP");
                     let moveNodeLeft = localStorage.getItem("CURRENT_MOVE_NODE_LEFT");
 
@@ -975,19 +970,40 @@
                                     let preNode;
                                     if (currNodeIndex === 0) {
                                         preNode = parentNode.childNodes[placeholderContainer].previousElementSibling;
+                                        console.log(preNode);
+                                        // preNode = null;
                                     } else{
-                                        preNode = parentNode.childNodes[placeholderContainer].previousElementSibling.previousElementSibling;
+                                        preNode = parentNode.childNodes[placeholderContainer].previousElementSibling;
+                                        if (this.validField(preNode)) {
+                                            if (preNode === liNode) {
+                                                preNode = preNode.previousElementSibling;
+                                            }
+                                            if (!this.validField(preNode.getAttribute("id"))){
+                                                preNode = null;
+                                            }
+                                        }
                                     }
+
                                     if (this.validField(preNode)) {
                                         // 节点中心Y坐标距父元素高度
                                         let preCenterHeightY = preNode.offsetTop + (preNode.clientHeight + preNode.clientTop * 2) / 2;
-                                        // 与移动元素相同
-                                        if (preNode !== liNode) {
-                                            if (mouseInParentY < preCenterHeightY) {
-                                                // 移除标识
-                                                parentNode.removeChild(parentNode.childNodes[placeholderContainer])
-                                                // 新增标识
-                                                this.insertBefore(parentNode, preNode);
+                                        // 与移动元素不相等
+                                        if (mouseInParentY < preCenterHeightY) {
+                                            // 移除标识
+                                            parentNode.removeChild(parentNode.childNodes[placeholderContainer])
+                                            // 新增标识
+                                            this.insertBefore(parentNode, preNode);
+                                            if (preNode === liNode) {
+
+                                            }
+                                            if (preNode.nextElementSibling === liNode) {
+                                                if (!this.validField(localStorage.getItem("HAS_MOVE_MORE_STEP"))) {
+                                                    localStorage.setItem("PLACEHOLDER_CONTAINER", (parseInt(placeholderContainer) - 2) + '');
+                                                    localStorage.setItem("HAS_MOVE_MORE_STEP", "1");
+                                                } else {
+                                                    localStorage.setItem("PLACEHOLDER_CONTAINER", (parseInt(placeholderContainer) - 1) + '');
+                                                }
+                                            } else {
                                                 localStorage.setItem("PLACEHOLDER_CONTAINER", (parseInt(placeholderContainer) - 1) + '');
                                             }
                                         }
@@ -996,16 +1012,25 @@
                                     // 占位容器后兄弟节点
                                     let nextNode = parentNode.childNodes[placeholderContainer].nextElementSibling;
                                     if (this.validField(nextNode)) {
-                                        let nextCenterHeightY = nextNode.offsetTop + (nextNode.clientHeight + nextNode.clientTop * 2) / 2;
-                                        console.log(nextNode.offsetTop)
-                                        console.log(mouseInParentY)
-                                        console.log(nextCenterHeightY)
-                                        if (mouseInParentY >= nextCenterHeightY) {
-                                            // 移除标识
-                                            parentNode.removeChild(parentNode.childNodes[placeholderContainer])
-                                            // 新增标识
-                                            this.insertAfter(parentNode, nextNode);
-                                            localStorage.setItem("PLACEHOLDER_CONTAINER", (parseInt(placeholderContainer) + 1) + '');
+                                        let flag = false;
+                                        if (nextNode === liNode) {
+                                            nextNode = liNode.nextElementSibling;
+                                            flag = true;
+                                        }
+                                        if (this.validField(nextNode)) {
+                                            let nextCenterHeightY = nextNode.offsetTop + (nextNode.clientHeight + nextNode.clientTop * 2) / 2;
+                                            if (mouseInParentY >= nextCenterHeightY) {
+                                                // 移除标识
+                                                parentNode.removeChild(parentNode.childNodes[placeholderContainer])
+                                                // 新增标识
+                                                this.insertAfter(parentNode, nextNode);
+                                                if (flag) {
+                                                    localStorage.removeItem("HAS_MOVE_MORE_STEP");
+                                                    localStorage.setItem("PLACEHOLDER_CONTAINER", (parseInt(placeholderContainer) + 2) + '');
+                                                } else {
+                                                    localStorage.setItem("PLACEHOLDER_CONTAINER", (parseInt(placeholderContainer) + 1) + '');
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -1041,7 +1066,6 @@
                     // 如果最后的节点是目标元素，则直接添加。因为默认是最后
                     parentNode.appendChild(element);
                 } else {
-                    console.log(targetNode)
                     // 如果不是，则插入在目标元素的下一个兄弟节点 的前面。也就是目标元素的后面
                     parentNode.insertBefore(element, targetNode.nextSibling);
                 }
@@ -1055,16 +1079,10 @@
                         newNode = JSON.parse(JSON.stringify(item));
                     }
                 });
+                console.log('待删第'+remIndex+'个-----新增至---' + idx);
                 this.formItem.splice(remIndex, 1); // 删除
                 this.formItem.splice(idx - 1, 0, newNode); // 新增
-
-                // 替换
-                // let nodeOne = JSON.parse(JSON.stringify(this.formItem[remIndex]));
-                // let nodeTwo = JSON.parse(JSON.stringify(this.formItem[idx - 1]));
-                // this.formItem.splice(remIndex, 0, nodeTwo)
-                // this.formItem.splice(idx - 1, 0, nodeOne);
-
-                // 替换
+                // this.formItem.splice(idx, 0, newNode); // 新增
             }
         },
         components: {
