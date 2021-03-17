@@ -1,6 +1,7 @@
 <template>
     <div>
         我是多选
+        <div>2</div>
     </div>
 </template>
 

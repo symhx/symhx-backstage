@@ -2,6 +2,9 @@
     <div>
         我是单选
         <div>1</div>
+        <div>2</div>
+        <el-radio v-model="radio" label="1">备选项</el-radio>
+        <el-radio v-model="radio" label="2">备选项</el-radio>
     </div>
 </template>
 
@@ -10,7 +13,9 @@
         name: "Radio",
         props: {},
         data() {
-            return {};
+            return {
+                radio: '1'
+            };
         },
         methods:{
 

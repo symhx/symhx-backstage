@@ -77,9 +77,7 @@
                                 </div>
                             </div>
                             <ul ref="drop-ul-wrap" @mousemove="moveChild" @mouseleave="outChild" @mouseup="endChild">
-                                <li :key="'item'+index" v-for="(item,index) in formItem" :id="item.id" :ref="item.id" @mousedown="startChild(index,$event)" >
-<!--                                    <div v-html="item.nodeHtml"></div>-->
-<!--                                    123-->
+                                <li :key="'item'+index" v-for="(item,index) in formItem" :id="item.id" :ref="item.id" @mousemove="mouseInLi" @mousedown.stop="startChild(index,$event)" >
                                     <component :is="item.label"></component>
                                 </li>
                             </ul>
@@ -669,6 +667,7 @@
                         li.style.top = object.clientY - this.clientY - 4 + 'px';
                         li.style.width = '96px';
                         li.style.height = '72px';
+                        li.style.zIndex = '99';
                         let a = document.createElement("a");
                         a.setAttribute("class", "btn-field field-checked btn-field-helper");
                         a.setAttribute("title", item.title);
@@ -805,13 +804,21 @@
             activePlus(e) {
                 console.log(e.currentTarget);
             },
+            // 鼠标进入li
+            mouseInLi(e) {
+                if ((e.clientY - 167 - e.target.offsetTop - 1 ) > e.currentTarget.clientHeight / 2) {
+                    console.log('下一个');
+                } else {
+                    console.log('上一个');
+                }
+            },
             // 点击按下元素
             startChild(index, e) {
                 let enableDrag = localStorage.getItem("ENABLE_DRAG");
-                localStorage.setItem("ENABLE_MOVE_FLAG", "1");
                 if (this.validField(enableDrag)) {
                     return;
                 }
+                localStorage.setItem("ENABLE_MOVE_FLAG", "1");
                 // 存储当前节点索引
                 localStorage.setItem("CURRENT_NODE_INDEX", index);
                 // 存储当前节点ID
@@ -820,11 +827,16 @@
                 localStorage.setItem("PARENT_NODE_IN_Y", e.currentTarget.offsetTop + '');  // 父元素中元素Y坐标
                 localStorage.setItem("PARENT_NODE_MOUSE_IN_X", (e.offsetX + e.currentTarget.offsetLeft) + "")  // 父元素中鼠标X;
                 localStorage.setItem("PARENT_NODE_MOUSE_IN_Y", (e.offsetY + e.currentTarget.offsetTop) + "") // 父元素中鼠标Y;
-                localStorage.setItem("CURRENT_NODE_MOUSE_X", e.offsetX);
-                localStorage.setItem("CURRENT_NODE_MOUSE_Y", e.offsetY);
+
+                localStorage.setItem("CURRENT_NODE_MOUSE_X", e.offsetX + '');
+                localStorage.setItem("CURRENT_NODE_MOUSE_Y", (e.offsetY + e.target.offsetTop) + '');
             },
             // 点击按上元素
             endChild: function (e) {
+                let enableDrag = localStorage.getItem("ENABLE_DRAG");
+                if (this.validField(enableDrag)) {
+                    return;
+                }
                 localStorage.removeItem("ENABLE_MOVE_FLAG");
                 //删除插入盒子标识
                 let liNode = e.target;
@@ -863,7 +875,7 @@
                                 curr[0].style.left = '0';
                             }
                             localStorage.removeItem("CURRENT_NODE_ID");
-                            this.$refs['drop-ul-wrap'].removeChild(this.$refs['drop-ul-wrap'].childNodes[index]);
+
                             // 排序
                             this.sortNode(liNode, index);
                             localStorage.removeItem("PLACEHOLDER_CONTAINER");
@@ -902,18 +914,22 @@
                 // 移除鼠标在当前节点坐标
                 localStorage.removeItem("CURRENT_NODE_MOUSE_X");
                 localStorage.removeItem("CURRENT_NODE_MOUSE_Y");
+                // 移除移动标识
+                localStorage.removeItem("HAS_MOVE_MORE_STEP");
             },
             // 移动元素
             moveChild: function (e) {
-                // 获取li对象
-                let liNode = e.target;
-                if (liNode.localName === 'ul'){
-                    return;
-                }
-                while (liNode.localName !== 'li') {
-                    liNode = liNode.parentNode;
-                }
                 if (this.validField(localStorage.getItem("ENABLE_MOVE_FLAG"))) {
+                    // 获取li对象
+                    let liNode = e.target;
+                    if (liNode.localName === 'ul'){
+                        return;
+                    }
+                    while (liNode.localName !== 'li') {
+                        liNode = liNode.parentNode;
+                    }
+                    console.log(e.clientX);
+                    console.log(e.clientY);
                     //屏幕鼠标X坐标
                     let mouseClientX = e.clientX;
                     //屏幕鼠标Y坐标
@@ -963,23 +979,26 @@
                             // 是否已存在占位容器
                             if (!this.validField(placeholderContainer)) {
                                 this.insertAfter(parentNode, liNode);
-                                localStorage.setItem("PLACEHOLDER_CONTAINER", (currNodeIndex + 1) + '');
+                                this.changeTempNodeIndex(-(currNodeIndex + 1));
                             } else {
                                 if (this.validField(parentNode.childNodes[placeholderContainer])) {
                                     // 占位容器前兄弟节点
                                     let preNode;
                                     if (currNodeIndex === 0) {
                                         preNode = parentNode.childNodes[placeholderContainer].previousElementSibling;
-                                        console.log(preNode);
-                                        // preNode = null;
+                                        if (preNode === liNode) {
+                                            preNode = null;
+                                        }
                                     } else{
                                         preNode = parentNode.childNodes[placeholderContainer].previousElementSibling;
                                         if (this.validField(preNode)) {
                                             if (preNode === liNode) {
                                                 preNode = preNode.previousElementSibling;
                                             }
-                                            if (!this.validField(preNode.getAttribute("id"))){
-                                                preNode = null;
+                                            if (this.validField(preNode)) {
+                                                if (!this.validField(preNode.getAttribute("id"))){
+                                                    preNode = null;
+                                                }
                                             }
                                         }
                                     }
@@ -993,18 +1012,15 @@
                                             parentNode.removeChild(parentNode.childNodes[placeholderContainer])
                                             // 新增标识
                                             this.insertBefore(parentNode, preNode);
-                                            if (preNode === liNode) {
-
-                                            }
                                             if (preNode.nextElementSibling === liNode) {
                                                 if (!this.validField(localStorage.getItem("HAS_MOVE_MORE_STEP"))) {
-                                                    localStorage.setItem("PLACEHOLDER_CONTAINER", (parseInt(placeholderContainer) - 2) + '');
+                                                    this.changeTempNodeIndex(2);
                                                     localStorage.setItem("HAS_MOVE_MORE_STEP", "1");
                                                 } else {
-                                                    localStorage.setItem("PLACEHOLDER_CONTAINER", (parseInt(placeholderContainer) - 1) + '');
+                                                    this.changeTempNodeIndex(1);
                                                 }
                                             } else {
-                                                localStorage.setItem("PLACEHOLDER_CONTAINER", (parseInt(placeholderContainer) - 1) + '');
+                                                this.changeTempNodeIndex(1);
                                             }
                                         }
                                     }
@@ -1026,9 +1042,9 @@
                                                 this.insertAfter(parentNode, nextNode);
                                                 if (flag) {
                                                     localStorage.removeItem("HAS_MOVE_MORE_STEP");
-                                                    localStorage.setItem("PLACEHOLDER_CONTAINER", (parseInt(placeholderContainer) + 2) + '');
+                                                    this.changeTempNodeIndex(-2);
                                                 } else {
-                                                    localStorage.setItem("PLACEHOLDER_CONTAINER", (parseInt(placeholderContainer) + 1) + '');
+                                                    this.changeTempNodeIndex(-1);
                                                 }
                                             }
                                         }
@@ -1072,6 +1088,7 @@
             },
             // 节点排序
             sortNode(node, idx) {
+                node.parentNode.removeChild(node.parentNode.childNodes[idx]);
                 let remIndex,newNode;
                 this.formItem.forEach((item, index) => {
                     if (item.id === node.id) {
@@ -1079,10 +1096,20 @@
                         newNode = JSON.parse(JSON.stringify(item));
                     }
                 });
-                console.log('待删第'+remIndex+'个-----新增至---' + idx);
+                console.log('将第【' + (remIndex + 1) + '】个元素移到第【' + (idx + 1) + '】的位置');
                 this.formItem.splice(remIndex, 1); // 删除
-                this.formItem.splice(idx - 1, 0, newNode); // 新增
-                // this.formItem.splice(idx, 0, newNode); // 新增
+                if (remIndex < idx) {
+                    this.formItem.splice(idx - 1, 0, newNode); // 新增
+                } else {
+                    this.formItem.splice(idx, 0, newNode);
+                }
+            },
+            // 变更临时节点索引
+            changeTempNodeIndex(step){
+                if (!this.validField(localStorage.getItem("PLACEHOLDER_CONTAINER"))) {
+                    localStorage.setItem("PLACEHOLDER_CONTAINER", '0');
+                }
+                localStorage.setItem("PLACEHOLDER_CONTAINER", (parseInt(localStorage.getItem("PLACEHOLDER_CONTAINER")) - step) + '');
             }
         },
         components: {
