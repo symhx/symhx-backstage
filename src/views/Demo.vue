@@ -665,8 +665,8 @@
                         li.setAttribute("ref", "ui-draggable");
                         li.setAttribute("ondragstart", "return false");
                         li.style.position = 'absolute';
-                        li.style.left = object.clientX - this.clientX + 4 + 'px';
-                        li.style.top = object.clientY - this.clientY - 4 + 'px';
+                        li.style.left = object.clientX - this.clientX + 'px';
+                        li.style.top = object.clientY - this.clientY + 'px';
                         li.style.width = localStorage.getItem("CLICK_NODE_CLIENT_WIDTH") + 'px';
                         li.style.height = localStorage.getItem("CLICK_NODE_CLIENT_HEIGHT") + 'px';
                         li.style.zIndex = '99';
@@ -700,20 +700,20 @@
 
                 localStorage.setItem("id", e.currentTarget.firstChild.getAttribute("id"));
                 localStorage.setItem("title", e.currentTarget.firstChild.getAttribute("title"));
+                let topHeight = this.$refs['form-header'].clientTop * 2 + this.$refs['form-header'].offsetHeight;
                 // 记录初始位置
                 this.startPosition.x = e.currentTarget.offsetLeft;
                 this.startPosition.y = e.currentTarget.offsetTop;
-                this.startCoordinate.x = e.currentTarget.offsetLeft + this.startPosition.x;
-                this.startCoordinate.y = e.target.parentNode.offsetTop + e.target.parentNode.parentNode.offsetTop;
+                // 记录点击节点起始坐标
+                this.startCoordinate.x = e.currentTarget.offsetLeft;
+                this.startCoordinate.y = topHeight + e.currentTarget.offsetTop + e.currentTarget.parentNode.offsetTop;
                 // 记录点击位置
-                console.log(e);
-                console.log(e.currentTarget);
-                this.clientX = e.offsetX;
-                this.clientY = e.offsetY;
+                this.clientX = e.clientX - this.startCoordinate.x;
+                this.clientY = e.clientY - this.startCoordinate.y;
                 // 记录点击对象宽高
-                this.clientWidth = e.target.offsetWidth;
-                this.clientHeight = e.target.offsetHeight;
-                e.target.parentNode.classList.add('active');
+                this.clientWidth = e.currentTarget.offsetWidth;
+                this.clientHeight = e.currentTarget.offsetHeight;
+                e.currentTarget.parentNode.classList.add('active');
                 this.down = true;
             },
             // 拖拽
@@ -726,10 +726,10 @@
                 }
                 if (this.down) {
                     if (this.$refs['base-wrap'].lastChild.localName === 'div' && !this.moveLi) {
-                        this.moveType(node);
+                        this.moveType(e);
                     } else {
-                        this.$refs['base-wrap'].lastChild.style.left = e.clientX - this.clientX + 4 + 'px';
-                        this.$refs['base-wrap'].lastChild.style.top = e.clientY - this.clientY - 4 + 'px';
+                        this.$refs['base-wrap'].lastChild.style.left = e.clientX - this.clientX + 'px';
+                        this.$refs['base-wrap'].lastChild.style.top = e.clientY - this.clientY + 'px';
                     }
                     if (e.clientX > this.position.offsetX && e.clientX < this.position.offsetX + this.position.clientWidth) {
                         this.computedChildNodeRange(e);
@@ -738,19 +738,14 @@
             },
             // 拖拽结束
             dragend(e) {
+                this.down = false;
                 // 删除
                 localStorage.removeItem("CLICK_NODE_CLIENT_WIDTH");
                 localStorage.removeItem("CLICK_NODE_CLIENT_HEIGHT");
                 if (this.$refs['base-wrap'].lastChild.localName !== 'li') {
                     return;
                 }
-                let object = e.target;
-                if (e.target.parentNode.localName !== 'li') {
-                    object = e.target.parentNode.parentNode
-                } else {
-                    object = e.target.parentNode
-                }
-                this.down = false;
+                let object = e.currentTarget.lastChild
                 // 追加元素
                 if (this.validField(localStorage.getItem("PLACEHOLDER_CONTAINER"))) {
                     let placeholderContainer = localStorage.getItem("PLACEHOLDER_CONTAINER");
@@ -1350,12 +1345,12 @@
         border-radius: 4px;
         box-shadow: 0 0 4px 0 rgba(5, 20, 51, 0.2);
         background: rgba(255,255,255,0.5);
-        -webkit-backdrop-filter: blur(43px);
+        -webkit-backdrop-filter: blur(2px);
         backdrop-filter: blur(2px);
     }
     .ui-draggable-dragging a {
         display: block;
-        padding: 14px 5px 10px;
+        padding: 10px 5px 12px;
         color: #2e73ff;
     }
     .ui-draggable-dragging a i {
@@ -1363,7 +1358,7 @@
     }
     .ui-draggable-dragging a span {
         display: block;
-        padding-top: 6px;
+        padding-top: 5px;
         font-size: 14px;
     }
 
