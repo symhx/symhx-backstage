@@ -76,8 +76,8 @@
                                     </div>
                                 </div>
                             </div>
-                            <ul ref="drop-ul-wrap" @mousemove="moveChild" @mouseleave="outChild" @mouseup="endChild">
-                                <li :key="'item'+index" v-for="(item,index) in formItem" :id="item.id" :ref="item.id" @mousemove="mouseInLi" @mousedown.stop="startChild(index,$event)" >
+                            <ul ref="drop-ul-wrap" @mousemove="moveChild" @mouseleave="outChild" @mouseup.prevent="endChild">
+                                <li :key="'item'+index" v-for="(item,index) in formItem" :id="item.id" :ref="item.id" @mousedown.prevent="startChild(index,$event)" >
                                     <component :is="item.label"></component>
                                 </li>
                             </ul>
@@ -92,7 +92,7 @@
                 </div>
             </div>
             <div id="right" class="right-property-wrap">
-                <div class="notice" style="background: #fff;;line-height: 22px;" id="noFieldSelected">
+                <div class="notice" style="line-height: 22px;" id="noFieldSelected">
                     <div style="margin: 64px 0 16px ">
                         <img src="../assets/nomessagen.png" @dragstart="noDrag">
                     </div>
@@ -655,7 +655,9 @@
             }
         },
         methods: {
-            moveType(id,object) {
+            moveType(object) {
+                let id = localStorage.getItem("id");
+                this.currId = id;
                 this.liTemplate.forEach(item => {
                     if (item.id === id) {
                         let li = document.createElement("li")
@@ -665,8 +667,8 @@
                         li.style.position = 'absolute';
                         li.style.left = object.clientX - this.clientX + 4 + 'px';
                         li.style.top = object.clientY - this.clientY - 4 + 'px';
-                        li.style.width = '96px';
-                        li.style.height = '72px';
+                        li.style.width = localStorage.getItem("CLICK_NODE_CLIENT_WIDTH") + 'px';
+                        li.style.height = localStorage.getItem("CLICK_NODE_CLIENT_HEIGHT") + 'px';
                         li.style.zIndex = '99';
                         let a = document.createElement("a");
                         a.setAttribute("class", "btn-field field-checked btn-field-helper");
@@ -692,14 +694,20 @@
             },
             // 拖拽开始
             dragstart(e) {
-                sessionStorage.setItem("id", e.target.getAttribute("id"));
-                sessionStorage.setItem("title", e.target.getAttribute("title"));
+                // 记录宽高
+                localStorage.setItem("CLICK_NODE_CLIENT_WIDTH", e.currentTarget.clientWidth);
+                localStorage.setItem("CLICK_NODE_CLIENT_HEIGHT", e.currentTarget.clientHeight);
+
+                localStorage.setItem("id", e.currentTarget.firstChild.getAttribute("id"));
+                localStorage.setItem("title", e.currentTarget.firstChild.getAttribute("title"));
                 // 记录初始位置
-                this.startPosition.x = e.target.parentNode.offsetLeft;
-                this.startPosition.y = e.target.parentNode.offsetTop;
-                this.startCoordinate.x = e.target.parentNode.parentNode.parentNode.offsetLeft + this.startPosition.x;
+                this.startPosition.x = e.currentTarget.offsetLeft;
+                this.startPosition.y = e.currentTarget.offsetTop;
+                this.startCoordinate.x = e.currentTarget.offsetLeft + this.startPosition.x;
                 this.startCoordinate.y = e.target.parentNode.offsetTop + e.target.parentNode.parentNode.offsetTop;
                 // 记录点击位置
+                console.log(e);
+                console.log(e.currentTarget);
                 this.clientX = e.offsetX;
                 this.clientY = e.offsetY;
                 // 记录点击对象宽高
@@ -712,32 +720,27 @@
             drag(e) {
                 this.mouseX = e.clientX;
                 this.mouseY = e.clientY;
+                let node = e.target;
+                while (node.localName !== 'a' && !this.validField(node.getAttribute("id"))) {
+                    node = node.parentNode;
+                }
                 if (this.down) {
-                    if (this.$refs['base-wrap'].lastChild.nodeName === 'DIV' && !this.moveLi) {
-                        this.moveType(e.target.id, e);
-                        this.currId = e.target.id;
+                    if (this.$refs['base-wrap'].lastChild.localName === 'div' && !this.moveLi) {
+                        this.moveType(node);
                     } else {
                         this.$refs['base-wrap'].lastChild.style.left = e.clientX - this.clientX + 4 + 'px';
                         this.$refs['base-wrap'].lastChild.style.top = e.clientY - this.clientY - 4 + 'px';
                     }
-                    if (e.clientY >= this.position.offsetY && e.clientY < this.position.offsetY + this.position.clientHeight + 20 && e.clientX > this.position.offsetX && e.clientX < this.position.offsetX + this.position.clientWidth) {
-                        if (document.getElementsByClassName("portlet-placeholder").length === 0) {
-                            let li = document.createElement("li");
-                            li.setAttribute("class", "portlet-placeholder field default");
-                            li.style.height = '71px';
-                            li.style.width = '100%';
-                            this.$refs['drop-ul-wrap'].appendChild(li);
-                        }
-                    } else {
-                        let dom = document.getElementsByClassName("portlet-placeholder");
-                        if (dom.length > 0) {
-                            this.$refs['drop-ul-wrap'].removeChild(document.getElementsByClassName("portlet-placeholder")[0]);
-                        }
+                    if (e.clientX > this.position.offsetX && e.clientX < this.position.offsetX + this.position.clientWidth) {
+                        this.computedChildNodeRange(e);
                     }
                 }
             },
             // 拖拽结束
             dragend(e) {
+                // 删除
+                localStorage.removeItem("CLICK_NODE_CLIENT_WIDTH");
+                localStorage.removeItem("CLICK_NODE_CLIENT_HEIGHT");
                 if (this.$refs['base-wrap'].lastChild.localName !== 'li') {
                     return;
                 }
@@ -748,17 +751,15 @@
                     object = e.target.parentNode
                 }
                 this.down = false;
-                let dom = document.getElementsByClassName("portlet-placeholder");
-                // 清除放置区
-                if (dom.length > 0) {
-                    this.$refs['drop-ul-wrap'].removeChild(document.getElementsByClassName("portlet-placeholder")[0]);
-                }
-                if (e.clientY > this.position.offsetY && e.clientY < this.position.offsetY + this.position.clientHeight + 20 && e.clientX > this.position.offsetX && e.clientX < this.position.offsetX + this.position.clientWidth) {
-                    let element = document.createElement("li");
-                    let text = document.createTextNode("Hi there and greetings!");
-                    element.appendChild(text);
-                    this.$refs['drop-ul-wrap'].appendChild(element);
-                    this.position.offsetY = this.$refs['drop-ul-wrap'].clientHeight - 20 + this.$refs['view-box'].parentNode.offsetTop + this.$refs['formHeader'].offsetHeight + this.$refs['drop-ul-wrap'].offsetTop
+                // 追加元素
+                if (this.validField(localStorage.getItem("PLACEHOLDER_CONTAINER"))) {
+                    let placeholderContainer = localStorage.getItem("PLACEHOLDER_CONTAINER");
+                    // 删除占位
+                    this.$refs['drop-ul-wrap'].removeChild(this.$refs['drop-ul-wrap'].childNodes[placeholderContainer])
+                    this.formItem.splice(placeholderContainer, 0, {id: '122', label: 'radio'});
+                    localStorage.removeItem("PLACEHOLDER_CONTAINER");
+
+                    this.position.offsetY = this.$refs['drop-ul-wrap'].clientHeight - 20 + this.$refs['view-box'].parentNode.offsetTop + this.$refs['formHeader'].offsetHeight + this.$refs['drop-ul-wrap'].offsetTop;
                     // 清除样式
                     this.$refs['base-wrap'].removeChild(this.$refs['base-wrap'].lastChild);
                     this.clearActive();
@@ -794,6 +795,63 @@
                 this.startCoordinate.x = 0;
                 this.startCoordinate.y = 0;
             },
+            // 计算子元素宽高
+            computedChildNodeRange(e) {
+                let topHeight = this.$refs['form-header'].clientTop + this.$refs['form-header'].offsetHeight;
+                let formHeaderHeight = this.$refs['formHeader'].offsetHeight;
+                let ulTopHeight = this.$refs['drop-ul-wrap'].offsetTop;
+                let placeholderHeight = topHeight + formHeaderHeight + ulTopHeight;
+                let placeholderContainer = localStorage.getItem("PLACEHOLDER_CONTAINER");
+                if (e.clientY > placeholderHeight) {
+                    let parentNode = this.$refs['drop-ul-wrap'];
+                    let nodes = this.$refs['drop-ul-wrap'].childNodes;
+                    nodes.forEach((item,nodeIndex) => {
+                        if (!this.validField(item.getAttribute("id"))) {
+                            return;
+                        }
+                        if (e.clientY - placeholderHeight > item.offsetTop && e.clientY - placeholderHeight <= item.offsetTop + item.clientHeight + item.clientTop * 2) {
+                            if (e.clientY - placeholderHeight > item.offsetTop + (item.clientHeight + item.clientTop * 2) / 2) {
+                                console.log(nodeIndex + '下半部分');
+                                if (!this.validField(placeholderContainer)) {
+                                    this.insertBefore(parentNode, item.nextElementSibling);
+                                    // 设置占位索引
+                                    localStorage.setItem("PLACEHOLDER_CONTAINER", (nodeIndex + 1) + '');
+                                    this.changeTempNodeIndex(0);
+                                } else {
+                                    let tempNode = parentNode.childNodes[placeholderContainer];
+                                    if (tempNode.nextElementSibling === item) {
+                                        // 删除临时占位节点
+                                        parentNode.removeChild(parentNode.childNodes[placeholderContainer])
+                                        // 索引下移
+                                        this.insertBefore(parentNode, item.nextElementSibling);
+                                        this.changeTempNodeIndex(-1);
+                                    }
+                                }
+                            } else {
+                                console.log(nodeIndex + '上半部分');
+                                // 上半截
+                                if (!this.validField(placeholderContainer)) {
+                                    this.insertBefore(parentNode,item);
+                                    // 设置占位索引
+                                    localStorage.setItem("PLACEHOLDER_CONTAINER", nodeIndex + '');
+                                    this.changeTempNodeIndex(0);
+                                } else {
+                                    let tempNode = parentNode.childNodes[placeholderContainer];
+                                    if (this.validField(tempNode.previousElementSibling)) {
+                                        if (tempNode.previousElementSibling === item) {
+                                            // 删除临时占位节点
+                                            parentNode.removeChild(parentNode.childNodes[placeholderContainer]);
+                                            // 索引下移
+                                            this.insertBefore(parentNode, item);
+                                            this.changeTempNodeIndex(1);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+            },
             // 清除选中
             clearActive() {
                 if (this.currId !== 0) {
@@ -803,14 +861,6 @@
             // 选中组件
             activePlus(e) {
                 console.log(e.currentTarget);
-            },
-            // 鼠标进入li
-            mouseInLi(e) {
-                if ((e.clientY - 167 - e.target.offsetTop - 1 ) > e.currentTarget.clientHeight / 2) {
-                    console.log('下一个');
-                } else {
-                    console.log('上一个');
-                }
             },
             // 点击按下元素
             startChild(index, e) {
@@ -928,8 +978,6 @@
                     while (liNode.localName !== 'li') {
                         liNode = liNode.parentNode;
                     }
-                    console.log(e.clientX);
-                    console.log(e.clientY);
                     //屏幕鼠标X坐标
                     let mouseClientX = e.clientX;
                     //屏幕鼠标Y坐标
@@ -1058,9 +1106,6 @@
             outChild(e) {
                 // localStorage.removeItem("CURRENT_NODE_ID");
             },
-            getIndex(item) {
-                return JSON.parse(JSON.stringify(this.formItem)).filter(item => item !== '').indexOf(item);
-            },
             validField(field) {
                 if (null !== field && undefined !== field && '' !== field) {
                     return true;
@@ -1118,8 +1163,12 @@
     }
 </script>
 <style>
+    body {
+        /*background: linear-gradient(to right bottom, #E3FDF5, #FFE6FA);*/
+        /*background: linear-gradient(to right bottom, #7DE2FC, #B9B6E5);*/
+        background: linear-gradient(to right bottom, #accbee, #e7f0fd);
+    }
     .diy-wrap {
-        background: #f5f5f5;
         -webkit-user-select: none;
         -moz-user-select: none;
         -o-user-select: none;
@@ -1137,16 +1186,16 @@
         margin-right: auto;
         height: calc(100vh - 64px);
         justify-content: space-between;
-        background: #e5e7ea;
     }
-    .diy-wrap>.form-body-wrap>div:nth-child(1){
+    .diy-wrap>.form-body-wrap>div:nth-child(1) {
         width: 320px;
-        background: #fff;
-        box-shadow: 0 0 4px 0 #dfdfdf;
+        box-shadow: 0 0 4px 0 #e2e2e2;
         float: left;
         margin-right: 8px;
         overflow: auto;
-        flex-shrink:0
+        flex-shrink: 0;
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
     }
     .diy-wrap>.form-body-wrap>div:nth-child(2){
         position: relative;
@@ -1154,13 +1203,10 @@
     .diy-wrap>.form-body-wrap>div:nth-child(2)>div:first-child {
         width: 700px;
         height: calc(100% - 70px);
-        border-radius: 2px;
-        border-left: 1px solid rgba(217, 217, 217, 1);
-        border-right: 1px solid rgba(217, 217, 217, 1);
+        border-radius: 4px;
         padding-bottom: 5px;
-        background: #ffffff;
-        box-shadow: 0 2px 5px 0 #d9d9d9;
         position: relative;
+        background: linear-gradient(to right, rgba(255, 255, 255, .5), rgba(255, 255, 255, .2));
     }
     .diy-wrap>.form-body-wrap>div:nth-child(2)>.form-footer {
         position: absolute;
@@ -1169,10 +1215,10 @@
         bottom: 0;
         left: 0;
         width: 100%;
-        background: #FFFFFF;
         color: #a6a6b0;
         font-family: '微软雅黑', '宋体', serif;
         font-size: 14px;
+        background: linear-gradient(to right, rgba(255, 255, 255, .5), rgba(255, 255, 255, .2));
     }
     .diy-wrap>.form-body-wrap>div:nth-child(2)>.form-footer>div {
         position: absolute;
@@ -1200,27 +1246,23 @@
         float: left;
         width: 33.33%;
         text-align: center;
-        background: #ffffff;
         position: relative;
         display: inline-block;
     }
-    .tab-item>li>a{
+    .tab-item>li>a {
         display: block;
         padding: 10px 5px 12px;
         cursor: pointer;
         position: relative;
+        background: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0));
+        transition: all .4s linear;
     }
-    .tab-item>li>a::after{
-        content: "";
-        display: inline-block;
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        left: 0;
-        top: 0;
+    .tab-item>li:hover {
+        background: linear-gradient(to right, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.3));
+        border-radius: 4px;
     }
     .tab-item>li>a:hover {
-        color: #2e73ff;
+
     }
     a {
         text-decoration: none;
@@ -1229,13 +1271,11 @@
     .view-middle{
         overflow: visible;
     }
-    .view-middle>.form>.form-body>ul{
+    .view-middle>.form>.form-body>ul {
         position: relative;
         padding: 0 0 20px;
         display: inline-block;
         width: 100%;
-        background: #f3f5f6;
-        height: 100vh;
     }
     .view-middle>.form>.form-body>ul::after{
         display: table;
@@ -1245,7 +1285,6 @@
     .form-body>ul>li {
         margin-top: 12px;
         border-radius: 4px;
-        background-color: #fff;
         box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
         min-height: 60px;
         overflow: visible;
@@ -1286,13 +1325,13 @@
     .active > a{
         color: #2e73ff!important;
     }
-    .tabTitle{
+    .tabTitle {
         font-family: '微软雅黑', '宋体', serif;
         font-weight: 600;
-        background: #f2f3f4;
         font-size: 14px;
         line-height: 48px;
-        padding-left: 24px;
+        padding: 0 24px;
+        background: linear-gradient(to right, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.3));
     }
     .iconfont{
         margin: 0 6px;
@@ -1310,7 +1349,9 @@
         z-index: 10;
         border-radius: 4px;
         box-shadow: 0 0 4px 0 rgba(5, 20, 51, 0.2);
-        background: #fff;
+        background: rgba(255,255,255,0.5);
+        -webkit-backdrop-filter: blur(43px);
+        backdrop-filter: blur(2px);
     }
     .ui-draggable-dragging a {
         display: block;
@@ -1334,6 +1375,7 @@
         font-family: '微软雅黑', '宋体', serif;
         /*border: 1px dashed transparent;*/
         position: relative;
+        background: linear-gradient(to left, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.3));
     }
     .form-header>div:first-child {
         font-size: 22px;
@@ -1389,9 +1431,9 @@
         margin-left: 12px;
         width: 400px;
         box-sizing: border-box;
-        background: #fff;
         font-size: 14px;
         font-family: '微软雅黑', '宋体', serif;
+        background: linear-gradient(to bottom, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.2));
     }
     .right-property-wrap p{
         margin: 0;
@@ -1399,20 +1441,20 @@
 
 
     /*-------------------*/
-    .form-header-wrap{
+    .form-header-wrap {
         display: flex;
         justify-content: space-between;
         position: relative;
-        background: #fff;
         line-height: 64px;
         height: 64px;
-        box-shadow: 0 2px 4px 0 rgba(5,20,51,0.1);
+        box-shadow: 0 2px 4px 0 rgba(5, 20, 51, 0.1);
         z-index: 999;
         padding: 0 20px;
+        background: linear-gradient(to right bottom, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.2));
+        backdrop-filter: blur(10px);
     }
     .form-header-wrap>.left-back{
         text-align: left;
-        width: 200px;
         overflow: hidden;
         padding: 0;
         line-height: 64px;
@@ -1482,10 +1524,9 @@
         border-color: #578fff;
         color: #578fff;
     }
-    .controls-left::-webkit-scrollbar{
+    .controls-left::-webkit-scrollbar,.view-middle::-webkit-scrollbar {
         display: none;
     }
-
     .sortable-placeholder {
         border-radius: unset!important;
         display: block;
