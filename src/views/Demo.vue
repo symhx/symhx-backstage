@@ -1159,8 +1159,6 @@
 </script>
 <style>
     body {
-        /*background: linear-gradient(to right bottom, #E3FDF5, #FFE6FA);*/
-        /*background: linear-gradient(to right bottom, #7DE2FC, #B9B6E5);*/
         background: linear-gradient(to right bottom, #accbee, #e7f0fd);
     }
     .diy-wrap {
@@ -1250,14 +1248,13 @@
         cursor: pointer;
         position: relative;
         background: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0));
+        transform: scale(1);
         transition: all .4s linear;
     }
-    .tab-item>li:hover {
+    .tab-item>li>a:hover {
         background: linear-gradient(to right, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.3));
         border-radius: 4px;
-    }
-    .tab-item>li>a:hover {
-
+        transform: scale(1.1);
     }
     a {
         text-decoration: none;
