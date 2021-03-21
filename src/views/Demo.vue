@@ -77,8 +77,8 @@
                                 </div>
                             </div>
                             <ul ref="drop-ul-wrap" @mousemove="moveChild" @mouseleave="outChild" @mouseup.prevent="endChild">
-                                <li :key="'item'+index" v-for="(item,index) in formItem" :id="item.id" :ref="item.id" @mousedown.prevent="startChild(index,$event)" >
-                                    <component :is="item.label"></component>
+                                <li :class="{'active':activeComponentIndex === index}" :key="'item'+index" v-for="(item,index) in formItem" :id="item.id" :ref="item.id" @mousedown.prevent="startChild(index,$event)" @click="chooseComponent(index,item)">
+                                    <component :is="item.label" :attrObj="item.attrObj"></component>
                                 </li>
                             </ul>
                         </div>
@@ -92,12 +92,15 @@
                 </div>
             </div>
             <div id="right" class="right-property-wrap">
-                <div class="notice" style="line-height: 22px;" id="noFieldSelected">
+                <div v-if="activeComponent.componentId === null" class="notice" style="line-height: 22px;" id="noFieldSelected">
                     <div style="margin: 64px 0 16px ">
                         <img src="../assets/nomessagen.png" @dragstart="noDrag">
                     </div>
                     <div>没有选择字段</div>
                     <p>请在右侧表单选择字段然后在此处编辑属性</p>
+                </div>
+                <div v-else>
+                    <component :is="activeComponent.componentTag" @titleName="changeTitleName"></component>
                 </div>
             </div>
         </div>
@@ -105,12 +108,24 @@
 </template>
 
 <script>
-    import radio from '../components/form/Radio'
-    import checkBox from '../components/form/CheckBox'
+    import d_input from '../components/form/Input'
+    import d_textArea from '../components/form/TextArea'
+    import d_radio from '../components/form/Radio'
+    import d_checkBox from '../components/form/CheckBox'
+
+    import d_input_set from '../components/form/property/InputSetting'
+    import d_textArea_set from '../components/form/property/TextAreaSetting'
+    import d_radio_set from '../components/form/property/RadioSetting'
+    import d_checkBox_set from '../components/form/property/CheckBoxSetting'
     export default {
         name: "Demo",
         data() {
             return{
+                activeComponentIndex: null,
+                activeComponent: {
+                    componentId: null,
+                    componentTag: ''
+                },
                 position: {
                     clientWidth: 0,
                     clientHeight: 0,
@@ -581,10 +596,10 @@
                     }
                 ],
                 formItem: [
-                    {id: '121', label: 'radio'},
-                    {id: '232', label: 'checkBox'},
-                    {id: '343', label: 'checkBox'},
-                    {id: '454', label: 'radio'},
+                    {id: '121', label: 'd_input', attrObj: {}},
+                    {id: '232', label: 'd_textArea'},
+                    {id: '343', label: 'd_radio'},
+                    {id: '454', label: 'd_checkBox'}
                 ],
                 moveLi: false,
                 down: false,
@@ -859,6 +874,9 @@
             },
             // 点击按下元素
             startChild(index, e) {
+                if (e.button === 2) {
+                    return;
+                }
                 let enableDrag = localStorage.getItem("ENABLE_DRAG");
                 if (this.validField(enableDrag)) {
                     return;
@@ -1150,10 +1168,21 @@
                     localStorage.setItem("PLACEHOLDER_CONTAINER", '0');
                 }
                 localStorage.setItem("PLACEHOLDER_CONTAINER", (parseInt(localStorage.getItem("PLACEHOLDER_CONTAINER")) - step) + '');
+            },
+            chooseComponent(index, object) {
+                this.activeComponentIndex = index;
+                this.activeComponent.componentId = object.id;
+                this.activeComponent.componentTag = object.label + '_set';
+            },
+            changeTitleName(titleName) {
+                this.formItem[this.activeComponentIndex].attrObj.labelName = titleName;
             }
         },
         components: {
-            radio, checkBox
+            d_input, d_input_set,
+            d_textArea, d_textArea_set,
+            d_radio, d_radio_set,
+            d_checkBox, d_checkBox_set
         }
     }
 </script>
@@ -1282,8 +1311,9 @@
         overflow: visible;
         color: #484848;
         text-align: left;
-        border: 1px solid transparent;
+        border: 2px solid transparent;
         position: relative;
+        transition: .2s linear;
     }
     .form-body>ul>li.sortable-placeholder{
         height: 12px!important;
@@ -1291,7 +1321,7 @@
     }
     .form-body>ul>li:not(.sortable-placeholder):hover{
         cursor: pointer;
-        border: 1px dashed #aaa!important;
+        border: 2px solid #2e73ff!important;
     }
     .field{
         position: relative;
@@ -1525,5 +1555,17 @@
         background-color: #2672ff !important;
         visibility: visible !important;
         height: 8px !important;
+    }
+    .form-body ul>li::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 100;
+    }
+    .form-body ul>li.active{
+        border: 2px solid #2e73ff;
     }
 </style>

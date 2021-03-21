@@ -1,9 +1,9 @@
 <template>
     <div class="dynamic-radio-wrap" :class="[arrangement]">
-        <div class="label radio-label" :class="[showRadioLabel?'label-show':'label-hidden']" :style="{width: labelWidth +'px'}">
+        <div class="label radio-label" :class="[showLabel?'label-show':'label-hidden']" :style="{width: labelWidth +'px'}">
             <span>{{labelName}}</span>
         </div>
-        <div class="module radio-module" :class="[radioItemLayout]" :style="{width: optionContainerWidth + '%'}">
+        <div class="module radio-module" :class="[itemLayout]" :style="{width: optionContainerWidth + '%'}">
             <div class="module-wrap" v-for="(item,index) in radioItemList" :key="item">
                 <span class="shape circle" :class="{'select-item':index===selectedItem}"></span>
                 <span class="item-label">{{item}}</span>
@@ -26,11 +26,11 @@
                      * 列样式
                      * 2.dynamic-radio-wrap-style-column
                      */
-                    return 'dynamic-radio-wrap-style-row';
+                    return 'dynamic-radio-wrap-style-column';
                 }
             },
             // 标题显示状态
-            showRadioLabel: {
+            showLabel: {
                 type: Boolean,
                 default: () => {
                     return true;
@@ -47,10 +47,6 @@
             labelWidth: {
                 type: Number,
                 default: () => {
-                    /**
-                     * 50  一半
-                     * 100 铺满
-                     */
                     return 100;
                 }
             },
@@ -65,18 +61,22 @@
             optionContainerWidth: {
                 type: Number,
                 default: () => {
+                    /**
+                     * 50  一半
+                     * 100 铺满
+                     */
                     return 100;
                 }
             },
             // 选项排列方式
-            radioItemLayout: {
+            itemLayout: {
                 type: String,
                 default: () =>{
                     /**
                      * 行样式
-                     * 1.dynamic-radio-wrap-style-row
+                     * 1.radio-module-style-row
                      * 列样式
-                     * 2.dynamic-radio-wrap-style-column
+                     * 2.radio-module-style-row
                      */
                     return 'radio-module-style-row'
                 }
@@ -90,7 +90,6 @@
         },
         data() {
             return {
-                radio: '1'
             };
         },
         methods:{
@@ -115,7 +114,7 @@
         letter-spacing: 1px;
     }
     .dynamic-radio-wrap {
-        padding: 10px;
+        padding: 10px 20px;
         display: flex;
     }
     .dynamic-radio-wrap-style-row {
@@ -162,8 +161,7 @@
         flex-wrap: wrap;
     }
     .dynamic-radio-wrap-style-column .radio-module.radio-module-style-column>.module-wrap{
-        width: calc(100% / 3);
-        flex-grow: 1;
+        padding-left: 0;
     }
     .radio-module.radio-module-style-row {
         flex-direction: row;
